@@ -23,6 +23,6 @@ $$\dot{X} = -\mu_p \partial_{X}{V(x-X)}$$
 
 basic code and some usages are uploaded to github
 
-[https://github.com/hulksiksik/RTP_git/blob/main/RTP_simul.py](https://github.com/hulksiksik/RTP_git)
+[https://github.com/hulksiksik/RTP_git](https://github.com/hulksiksik/RTP_git)
 
 # measurement
