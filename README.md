@@ -13,7 +13,7 @@ Dept. of Physics and Astronomy, Seoul National University
 ![model](./image/model.png)
 ![dynamics](./image/dynamics.png)
 
-([K. W. Kim](http://k.W.Kim) et al 2020-1 KPS poster)
+(K. W. Kim et al 2020-1 KPS poster)
 
 ## passive object dynamics in lab frame
 
