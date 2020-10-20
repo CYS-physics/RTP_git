@@ -25,6 +25,7 @@ Dept. of Physics and Astronomy, Seoul National University
 
 basic code and some usages are uploaded to github
 
-[https://github.com/hulksiksik/RTP_git](https://github.com/hulksiksik/RTP_git)
+[https://github.com/CYS-physics/RTP_git](https://github.com/CYS-physics/RTP_git)
+
 
 # measurement
