@@ -21,7 +21,7 @@ Dept. of Physics and Astronomy, Seoul National University
 
 
 
-# code (numerical integration with random tumbling rate ![alpha](http://www.sciweavers.org/tex2img.php?eq=%24%5Calpha%24&bc=White&fc=Black&im=png&fs=30&ff=arev&edit=0))
+# code (numerical integration with random tumbling rate alpha)
 
 basic code and some usages are uploaded to github
 
