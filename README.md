@@ -19,7 +19,10 @@ Dept. of Physics and Astronomy, Seoul National University
 
 ![equation](http://www.sciweavers.org/tex2img.php?eq=%24%24%5Cdot%7BX%7D%20%3D%20-%5Cmu_p%20%5Cpartial_%7BX%7D%7BV%28x-X%29%7D%24%24&bc=White&fc=Black&im=png&fs=30&ff=arev&edit=0[/img])
 
-# code (numerical integration with random tumbling rate $\alpha$)
+
+
+
+# code (numerical integration with random tumbling rate ![alpha](http://www.sciweavers.org/tex2img.php?eq=%24%5Calpha%24&bc=White&fc=Black&im=png&fs=30&ff=arev&edit=0[/img]))
 
 basic code and some usages are uploaded to github
 
