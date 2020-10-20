@@ -20,11 +20,12 @@ class RTP_lab:     # OOP
     
     # initializing coefficients of model and configuration of states in phase space
     
-    def __init__(self,alpha=1, u=10, len_time=100, N_time=100,N_X=1, N_ptcl=40000, v=0, mu=1, muw = 0.005):
+    def __init__(self,alpha=1, u=10, len_time=100, N_time=100,N_X=1, N_ptcl=40000, v=0, mu=1, muw = 0.005, model=3):
         
         self.initial_state = (alpha,u,len_time,N_time,N_X, N_ptcl,v,mu,muw)    # recording initial state
         # coefficients
-        self.set_coeff(alpha, u, len_time, N_time, N_X,N_ptcl,v,mu, muw)      
+        self.set_coeff(alpha, u, len_time, N_time, N_X,N_ptcl,v,mu, muw)  
+        self.model=model
         
         # check the validity
         self.check_coeff()  
@@ -156,7 +157,10 @@ class RTP_lab:     # OOP
 #         v = -self.muw/self.mu*np.sum(1/6*(dxp1+ 2*dxp2 + 2*dxp3 + dxp4) ,axis=0)/self.delta_time
 
         dx = dxa*s  -self.mu*self.partial_V(x)*self.delta_time
-        v = self.muw*np.sum(self.partial_V(x),axis=0)
+        if self.model==3:
+            v = self.muw*np.sum(self.partial_V(x),axis=0)
+        elif self.model ==2:
+            v = self.v
 
 
 
