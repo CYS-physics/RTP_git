@@ -224,9 +224,9 @@ class RTP_lab:     # OOP
         
         
     # moment calculation        
-def time_moments(ptcl, number_X, f, t_step,  state):
+def time_moments(ptcl, number_X,L, f, t_step,  state):
     RTP3 = RTP_lab(alpha=1,len_time=200, N_time=10000, mu=1, muw = 1 )
-    RTP3.L=300
+    RTP3.L=L
     list_of_df = []
     
     measure = 1
@@ -311,7 +311,7 @@ def time_moments(ptcl, number_X, f, t_step,  state):
     
     
     
-    title = str(ptcl)+'ptcl'+str(number_X)+'pt_time.csv'
+    title = str(ptcl)+'ptcl'+str(number_X)+'L'+str(L)+'.csv'
 
     if not os.path.exists(title):
         moments.to_csv(title, mode='w')
@@ -319,12 +319,12 @@ def time_moments(ptcl, number_X, f, t_step,  state):
         moments.to_csv(title, mode='a',header=False)
         
     
-def measure(ptcl, number_X, f_init,f_fin,f_step, t_step):
+def measure(ptcl, number_X,L, f_init,f_fin,f_step, t_step):
     
     for i in trange(f_step):
         f = f_init + (f_fin-f_init)*i/f_step
-        state = os.getcwd()+'/data/'+str(ptcl)+str(number_X)+"f"+str(f)+'.npz'
-        time_moments(ptcl, number_X,f,t_step,state)
+        state = os.getcwd()+'/data/'+"ptcl"+str(ptcl)+"X"+str(number_X)+"L"+str(L)+"f"+str(f)+'.npz'
+        time_moments(ptcl, number_X,L,f,t_step,state)
        
     
 def simulate(N, L, l, a, f, muw,duration,Fs, name):
