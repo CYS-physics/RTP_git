@@ -229,7 +229,7 @@ def time_moments(ptcl, number_X,L, f, t_step,  state):
     RTP3.L=L
     list_of_df = []
     
-    measure = 1
+    measure = 100
         
     try:
         load = np.load(state)
@@ -279,16 +279,16 @@ def time_moments(ptcl, number_X,L, f, t_step,  state):
         second/=measure
         fourth/=measure
         second_r = second-first_r**2
-        binder = 1-(fourth/(3*second**2))
+        #binder = 1-(fourth/(3*second**2))
         
         c_first/=measure
         c_first_r/=measure
         c_second/=measure
         c_fourth/=measure
         c_second_r = c_second-c_first_r**2
-        c_binder = 1-(c_fourth/(3*c_second**2))
+        #c_binder = 1-(c_fourth/(3*c_second**2))
     
-        moment = pd.DataFrame({'muFu':[f],'one':[first],'one_r':[first_r], 'two':[second], 'two_r':[second_r] ,'four':[fourth],'binder':[binder], 'c_one':[c_first],'c_one_r':[c_first_r], 'c_two':[c_second], 'c_two_r':[c_second_r] ,'c_four':[c_fourth],'c_binder':[c_binder],'simul_iter':simul_iter})
+        moment = pd.DataFrame({'muFu':[f],'one':[first],'one_r':[first_r], 'two':[second], 'two_r':[second_r] ,'four':[fourth], 'c_one':[c_first],'c_one_r':[c_first_r], 'c_two':[c_second], 'c_two_r':[c_second_r] ,'c_four':[c_fourth],'simul_iter':simul_iter})
         list_of_df.append(moment)
                               
     moments = pd.concat(list_of_df)
