@@ -225,7 +225,7 @@ class RTP_lab:     # OOP
         
     # moment calculation        
 def time_moments(ptcl, number_X,L, f, t_step,  state):
-    RTP3 = RTP_lab(alpha=1,len_time=200, N_time=10000, mu=1, muw = 1 )
+    RTP3 = RTP_lab(alpha=1,len_time=200, N_time=10000, mu=1, muw = 0.01 )
     RTP3.L=L
     list_of_df = []
     
@@ -340,6 +340,12 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
     v_list = duration*[None]
     current_list = duration*[None]
     
+    RTP.muw =0
+    
+    for i in range(int(duration/5)):
+        RTP.time_evolve()
+    RTP.muw = muw
+    
     for i in trange(duration):
         RTP.time_evolve()
         
@@ -367,4 +373,9 @@ def scan(fin,ffin,N):
         name = 'scan6/'+ str(f)
         simulate(40000, 300, 30, 1, f,1, 2000000,10000, name)
     
-    
+def denscan(Ninit, Nrat,N):
+    for i in range(N):
+        nptcl = Ninit*Nrat**i
+        L = 300*Nrat**i
+        name = 'dens2/'+str(Ninit)+'i'+str(i)
+        simulate(nptcl,L,30,1,0.8,1,1000000, 10000,name)
