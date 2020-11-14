@@ -172,7 +172,15 @@ class RTP_lab:     # OOP
         self.v = v
         
         y=self.periodic(self.x-self.X)
-        self.current =self.u*np.sum(self.s*(y>=-self.l/2-self.d/self.k)*(y<=self.l/2+self.d/self.k),axis=0)         # difference of right moving and left moving active particle numbers in contact with object, see for mail from YB Sept,20, 20
+        self.current =np.sum(self.s*(y>=-self.l/2-self.d/self.k)*(y<=self.l/2+self.d/self.k),axis=0)         # difference of right moving and left moving active particle numbers in contact with object, see for mail from YB Sept,20, 20
+        
+        self.LR =np.sum(self.s*(y>=-self.l/2+self.d/self.k)*(y<=0)*(self.s==1),axis=0)  # left side right moving
+        self.LL =np.sum(self.s*(y>=-self.l/2+self.d/self.k)*(y<=0)*(self.s==-1),axis=0)
+        self.LD =np.sum(self.s*(y>=-self.l/2-self.d/self.k)*(y<=-self.l/2+self.d/self.k)*(self.s==1),axis=0)
+        self.RR =np.sum(self.s*(y>=0)*(y<=self.l/2-self.d/self.k)*(self.s==1),axis=0)
+        self.RL =np.sum(self.s*(y>=0)*(y<=self.l/2-self.d/self.k)*(self.s==-1),axis=0)
+        self.RD =np.sum(self.s*(y>=self.l/2-self.d/self.k)*(y<=self.l/2+self.d/self.k)*(self.s==-1),axis=0)
+        
         
         
         self.x += dx                     # active particles movement
@@ -340,6 +348,13 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
     v_list = duration*[None]
     current_list = duration*[None]
     
+    LL_list = duration*[None]
+    LR_list = duration*[None]
+    LD_list = duration*[None]
+    RL_list = duration*[None]
+    RR_list = duration*[None]
+    RD_list = duration*[None]
+    
     RTP.muw =0
     
     for i in range(int(duration/5)):
@@ -352,6 +367,15 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
         X_list[i] = pd.DataFrame(RTP.X)
         v_list[i] = pd.DataFrame(RTP.v)
         current_list[i] = pd.DataFrame(RTP.current)
+        
+        LR_list[i] = pd.DataFrame(RTP.LR)
+        LL_list[i] = pd.DataFrame(RTP.LL)
+        LD_list[i] = pd.DataFrame(RTP.LD)
+        RR_list[i] = pd.DataFrame(RTP.RR)
+        RL_list[i] = pd.DataFrame(RTP.RL)
+        RD_list[i] = pd.DataFrame(RTP.RD)
+        
+        
     save_dict={}
     save_dict['X'] = pd.concat(X_list)
     save_dict['v'] = pd.concat(v_list)
@@ -359,6 +383,16 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
     save_dict['current'] = pd.concat(current_list)
     save_dict['Fs'] = RTP.N_time
     save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)
+    
+    save_dict['LR'] = pd.concat(LR_list)
+    save_dict['LL'] = pd.concat(LL_list)
+    save_dict['LD'] = pd.concat(LD_list)
+    save_dict['RR'] = pd.concat(RR_list)
+    save_dict['RL'] = pd.concat(RL_list)
+    save_dict['RD'] = pd.concat(RD_list)
+    
+    
+    
     state = os.getcwd()+'/data/'+str(name)+'.npz'
 
     np.savez(state, **save_dict)
