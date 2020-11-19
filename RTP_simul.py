@@ -95,15 +95,19 @@ class RTP_lab:     # OOP
         
         # indexing
         A =  (-self.l/2-self.d/self.k<=y)*(y<=-self.l/2+self.d/self.k)      # left boundary
-        B = (-self.l/2+self.d/self.k<y)*(y<0)                  # left side of object
-        C = (0<y)*(y<self.l/2-self.d/self.k)                   # right side of object
+        B = (-self.l/2+self.d/self.k<y)*(y<-self.d/self.k)                  # left side of object
+        
+        C = (self.d/self.k<y)*(y<self.l/2-self.d/self.k)                   # right side of object
         D = (self.l/2-self.d/self.k<=y)*(y<=self.l/2+self.d/self.k)         # right boundary
+        
+        E = (-self.d/self.k<=y)*(y<=self.d/self.k)# center boundary
         
         output[A]+=self.F/(1+np.exp(-self.k*(y[A]+self.l/2)))
         #output[A]+=self.F/2*(1+(y[A]-self.l/2)/d)
         output[B]+=self.F
         output[C]-=self.F
         output[D]-=self.F/(1+np.exp(self.k*(y[D]-self.l/2)))
+        output[E]+=self.F* (  np.exp(-self.k*(y[E])) - np.exp(self.k*(y[E]))  )/(   np.exp(-self.k*(y[E]))  +  np.exp(self.k*(y[E]))  )
         #output[D]+=self.F/2*(1-(y[D]+self.l/2)/d)
         
         return output
@@ -171,16 +175,23 @@ class RTP_lab:     # OOP
         (v, dx, ds) = self.dynamics(self.x, self.s)
         self.v = v
         
-        y=self.periodic(self.x-self.X)
-        self.current =np.sum(self.s*(y>=-self.l/2-self.d/self.k)*(y<=self.l/2+self.d/self.k),axis=0)         # difference of right moving and left moving active particle numbers in contact with object, see for mail from YB Sept,20, 20
+#         y=self.periodic(self.x-self.X)
+#         self.current =np.sum(self.s*(y>=-self.l/2-self.d/self.k)*(y<=self.l/2+self.d/self.k),axis=0)         # difference of right moving and left moving active particle numbers in contact with object, see for mail from YB Sept,20, 20
         
-        self.LR =np.sum(self.s*(y>=-self.l/2+self.d/self.k)*(y<=0)*(self.s==1),axis=0)  # left side right moving
-        self.LL =np.sum(self.s*(y>=-self.l/2+self.d/self.k)*(y<=0)*(self.s==-1),axis=0)
-        self.LD =np.sum(self.s*(y>=-self.l/2-self.d/self.k)*(y<=-self.l/2+self.d/self.k)*(self.s==1),axis=0)
-        self.RR =np.sum(self.s*(y>=0)*(y<=self.l/2-self.d/self.k)*(self.s==1),axis=0)
-        self.RL =np.sum(self.s*(y>=0)*(y<=self.l/2-self.d/self.k)*(self.s==-1),axis=0)
-        self.RD =np.sum(self.s*(y>=self.l/2-self.d/self.k)*(y<=self.l/2+self.d/self.k)*(self.s==-1),axis=0)
-        
+#         self.LR =np.sum(self.s*(y>=-self.l/2+self.d/self.k)*(y<=0)*(self.s==1),axis=0)  # left side right moving
+#         self.LL =np.sum(self.s*(y>=-self.l/2+self.d/self.k)*(y<=0)*(self.s==-1),axis=0)
+#         self.LD =np.sum(self.s*(y>=-self.l/2-self.d/self.k)*(y<=-self.l/2+self.d/self.k)*(self.s==1),axis=0)
+#         self.RR =np.sum(self.s*(y>=0)*(y<=self.l/2-self.d/self.k)*(self.s==1),axis=0)
+#         self.RL =np.sum(self.s*(y>=0)*(y<=self.l/2-self.d/self.k)*(self.s==-1),axis=0)
+#         self.RD =np.sum(self.s*(y>=self.l/2-self.d/self.k)*(y<=self.l/2+self.d/self.k)*(self.s==-1),axis=0)
+
+
+        # coherence measure
+        phi = 2*np.pi*(self.x/self.L)
+        phi_x = np.average(np.cos(phi),axis=0)
+        phi_y = np.average(np.sin(phi),axis=0)
+        self.co_r = np.sqrt(phi_x**2+phi_y**2)
+        self.co_phi = np.arctan2(phi_y,phi_x)
         
         
         self.x += dx                     # active particles movement
@@ -346,14 +357,18 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
     
     X_list = duration*[None]
     v_list = duration*[None]
-    current_list = duration*[None]
     
-    LL_list = duration*[None]
-    LR_list = duration*[None]
-    LD_list = duration*[None]
-    RL_list = duration*[None]
-    RR_list = duration*[None]
-    RD_list = duration*[None]
+    co_r_list = duration*[None]
+    co_phi_list = duration*[None]
+    
+#     current_list = duration*[None]
+    
+#     LL_list = duration*[None]
+#     LR_list = duration*[None]
+#     LD_list = duration*[None]
+#     RL_list = duration*[None]
+#     RR_list = duration*[None]
+#     RD_list = duration*[None]
     
     RTP.muw =0
     
@@ -366,30 +381,36 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
         
         X_list[i] = pd.DataFrame(RTP.X)
         v_list[i] = pd.DataFrame(RTP.v)
-        current_list[i] = pd.DataFrame(RTP.current)
+        co_r_list[i] = pd.DataFrame(RTP.co_r)
+        co_phi_list[i] = pd.DataFrame(RTP.co_phi)
+
+#         current_list[i] = pd.DataFrame(RTP.current)
         
-        LR_list[i] = pd.DataFrame(RTP.LR)
-        LL_list[i] = pd.DataFrame(RTP.LL)
-        LD_list[i] = pd.DataFrame(RTP.LD)
-        RR_list[i] = pd.DataFrame(RTP.RR)
-        RL_list[i] = pd.DataFrame(RTP.RL)
-        RD_list[i] = pd.DataFrame(RTP.RD)
+#         LR_list[i] = pd.DataFrame(RTP.LR)
+#         LL_list[i] = pd.DataFrame(RTP.LL)
+#         LD_list[i] = pd.DataFrame(RTP.LD)
+#         RR_list[i] = pd.DataFrame(RTP.RR)
+#         RL_list[i] = pd.DataFrame(RTP.RL)
+#         RD_list[i] = pd.DataFrame(RTP.RD)
         
         
     save_dict={}
     save_dict['X'] = pd.concat(X_list)
     save_dict['v'] = pd.concat(v_list)
+    save_dict['co_r'] = pd.concat(co_r_list)
+    save_dict['co_phi'] = pd.concat(co_phi_list)
+
     save_dict['muw'] = RTP.muw
-    save_dict['current'] = pd.concat(current_list)
+#     save_dict['current'] = pd.concat(current_list)
     save_dict['Fs'] = RTP.N_time
-    save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)
+    save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + 'a :'+str(a)
     
-    save_dict['LR'] = pd.concat(LR_list)
-    save_dict['LL'] = pd.concat(LL_list)
-    save_dict['LD'] = pd.concat(LD_list)
-    save_dict['RR'] = pd.concat(RR_list)
-    save_dict['RL'] = pd.concat(RL_list)
-    save_dict['RD'] = pd.concat(RD_list)
+#     save_dict['LR'] = pd.concat(LR_list)
+#     save_dict['LL'] = pd.concat(LL_list)
+#     save_dict['LD'] = pd.concat(LD_list)
+#     save_dict['RR'] = pd.concat(RR_list)
+#     save_dict['RL'] = pd.concat(RL_list)
+#     save_dict['RD'] = pd.concat(RD_list)
     
     
     
@@ -401,15 +422,15 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
     plt.title('active density')
     plt.show()
 
-def scan(fin,ffin,N):
+def scan(fin,ffin,N,N_ptcl):
     for i in trange(N):
         f = fin+(ffin-fin)*i/N
-        name = 'scan6/'+ str(f)
-        simulate(40000, 300, 30, 1, f,1, 2000000,10000, name)
+        name = 'scan2/'+ str(f)
+        simulate(N_ptcl, 300, 30, 1, f,1, 1000000,10000, name)
     
-def denscan(Ninit, Nrat,N):
+def denscan(Ninit, Nrat,N,Fs):
     for i in range(N):
         nptcl = Ninit*Nrat**i
         L = 300*Nrat**i
-        name = 'dens2/'+str(Ninit)+'i'+str(i)
-        simulate(nptcl,L,30,1,0.8,1,1000000, 10000,name)
+        name = 'dens3/'+str(Ninit)+'i'+str(i)+'Fs'+str(Fs)
+        simulate(nptcl,L,30,1,0.8,1,1000000, Fs,name)
