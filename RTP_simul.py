@@ -415,7 +415,7 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
     
     
     state = os.getcwd()+'/data/'+str(name)+'.npz'
-
+    os.makedirs(os.getcwd()+'/data/'+str(name),exist_ok=True)
     np.savez(state, **save_dict)
     
     plt.hist(RTP.x,bins = 200)
@@ -425,8 +425,8 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
 def scan(fin,ffin,N,N_ptcl):
     for i in trange(N):
         f = fin+(ffin-fin)*i/N
-        name = 'scan2/'+ str(f)
-        simulate(N_ptcl, 300, 30, 1, f,1, 1000000,10000, name)
+        name = 'scan4/'+ str(f)
+        simulate(N_ptcl, 100, 30, 1, f,1, 500000,10000, name)
     
 def denscan(Ninit, Nrat,N,Fs):
     for i in range(N):
