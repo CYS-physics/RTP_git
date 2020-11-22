@@ -11,6 +11,7 @@ from tqdm import trange              # progess bar
 import matplotlib.pyplot as plt      # visualization
 import os                            # file management
 from matplotlib.animation import FuncAnimation     # animation
+import sys
 
 
 
@@ -379,10 +380,12 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
     for i in trange(duration):
         RTP.time_evolve()
         
-        X_list[i] = pd.DataFrame(RTP.X)
-        v_list[i] = pd.DataFrame(RTP.v)
-        co_r_list[i] = pd.DataFrame(RTP.co_r)
-        co_phi_list[i] = pd.DataFrame(RTP.co_phi)
+        X_list[i] = RTP.X
+        v_list[i] = RTP.v
+        co_r_list[i] = RTP.co_r
+        co_phi_list[i] = RTP.co_phi
+        
+
 
 #         current_list[i] = pd.DataFrame(RTP.current)
         
@@ -395,10 +398,10 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
         
         
     save_dict={}
-    save_dict['X'] = pd.concat(X_list)
-    save_dict['v'] = pd.concat(v_list)
-    save_dict['co_r'] = pd.concat(co_r_list)
-    save_dict['co_phi'] = pd.concat(co_phi_list)
+    save_dict['X'] = X_list
+    save_dict['v'] = v_list
+    save_dict['co_r'] = co_r_list
+    save_dict['co_phi'] = co_phi_list
 
     save_dict['muw'] = RTP.muw
 #     save_dict['current'] = pd.concat(current_list)
@@ -418,9 +421,9 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
     os.makedirs(os.getcwd()+'/data/'+str(name),exist_ok=True)
     np.savez(state, **save_dict)
     
-    plt.hist(RTP.x,bins = 200)
-    plt.title('active density')
-    plt.show()
+#     plt.hist(RTP.x,bins = 200)
+#     plt.title('active density')
+#     plt.show()
 
 def scan(fin,ffin,N,N_ptcl):
     for i in trange(N):
