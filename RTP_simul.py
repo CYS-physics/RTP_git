@@ -25,7 +25,9 @@ class RTP_lab:     # OOP
         
         self.initial_state = (alpha,u,len_time,N_time,N_X, N_ptcl,v,mu,muw)    # recording initial state
         # coefficients
-        self.set_coeff(alpha, u, len_time, N_time, N_X,N_ptcl,v,mu, muw)  
+        self.set_coeff(alpha, u, len_time, N_time, N_X,N_ptcl,v,mu, muw) 
+        
+        # model=2 constantly moving passive object, model=3 interacting passive object
         self.model=model
         
         # check the validity
@@ -188,11 +190,14 @@ class RTP_lab:     # OOP
 
 
         # coherence measure
-        phi = 2*np.pi*(self.x/self.L)
+        phi = 2*np.pi*(self.x*(np.abs(self.partial(x)))/self.L)
+        
         phi_x = np.average(np.cos(phi),axis=0)
         phi_y = np.average(np.sin(phi),axis=0)
         self.co_r = np.sqrt(phi_x**2+phi_y**2)
         self.co_phi = np.arctan2(phi_y,phi_x)
+        
+        
         
         
         self.x += dx                     # active particles movement
@@ -418,7 +423,7 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
     
     
     state = os.getcwd()+'/data/'+str(name)+'.npz'
-    os.makedirs(os.getcwd()+'/data/'+str(name),exist_ok=True)
+#     os.makedirs(os.getcwd()+'/data/'+str(name),exist_ok=True)
     np.savez(state, **save_dict)
     
 #     plt.hist(RTP.x,bins = 200)
@@ -428,8 +433,8 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
 def scan(fin,ffin,N,N_ptcl):
     for i in trange(N):
         f = fin+(ffin-fin)*i/N
-        name = 'scan4/'+ str(f)
-        simulate(N_ptcl, 100, 30, 1, f,1, 500000,10000, name)
+        name = 'vscan1/'+ str(f)
+        simulate(N_ptcl, 300, 30, 1, f,0.1, 1000000,10000, name)
     
 def denscan(Ninit, Nrat,N,Fs):
     for i in range(N):
