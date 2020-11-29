@@ -190,10 +190,10 @@ class RTP_lab:     # OOP
 
 
         # coherence measure
-        phi = 2*np.pi*(self.x*(np.abs(self.partial_V(self.x)))/self.L)
+        phi = 2*np.pi*(self.x/self.L)
         
-        phi_x = np.average(np.cos(phi),axis=0)
-        phi_y = np.average(np.sin(phi),axis=0)
+        phi_x = np.average(np.cos(phi)*(np.abs(self.partial_V(self.x))),axis=0)
+        phi_y = np.average(np.sin(phi)*(np.abs(self.partial_V(self.x))),axis=0)
         self.co_r = np.sqrt(phi_x**2+phi_y**2)
         self.co_phi = np.arctan2(phi_y,phi_x)
         
