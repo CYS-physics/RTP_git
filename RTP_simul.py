@@ -190,7 +190,7 @@ class RTP_lab:     # OOP
 
 
         # coherence measure
-        phi = 2*np.pi*(self.x*(np.abs(self.partial(x)))/self.L)
+        phi = 2*np.pi*(self.x*(np.abs(self.partial_V(self.x)))/self.L)
         
         phi_x = np.average(np.cos(phi),axis=0)
         phi_y = np.average(np.sin(phi),axis=0)
@@ -433,7 +433,7 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
 def scan(fin,ffin,N,N_ptcl):
     for i in trange(N):
         f = fin+(ffin-fin)*i/N
-        name = 'vscan1/'+ str(f)
+        name = 'vscan2/'+ str(f)
         simulate(N_ptcl, 300, 30, 1, f,0.1, 1000000,10000, name)
     
 def denscan(Ninit, Nrat,N,Fs):
