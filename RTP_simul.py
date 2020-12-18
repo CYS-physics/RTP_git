@@ -431,11 +431,12 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
 #     plt.show()
 
 def N_scan(fin,ffin,N,N_ptcl):
-    direc ='1216/'
-    rho=10
+    direc ='1218/'
+    rho=1
     L=300
     direc+='N/'+str(N_ptcl)+'/'
     os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
+    
     for i in trange(N):
         f = fin+(ffin-fin)*i/N
         name = direc+ str(f)
