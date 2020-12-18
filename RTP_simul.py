@@ -190,12 +190,12 @@ class RTP_lab:     # OOP
 
 
         # coherence measure
-        phi = 2*np.pi*(self.x/self.L)
+#         phi = 2*np.pi*(self.x/self.L)
         
-        phi_x = np.average(np.cos(phi)*(np.abs(self.partial_V(self.x))),axis=0)
-        phi_y = np.average(np.sin(phi)*(np.abs(self.partial_V(self.x))),axis=0)
-        self.co_r = np.sqrt(phi_x**2+phi_y**2)
-        self.co_phi = np.arctan2(phi_y,phi_x)
+#         phi_x = np.average(np.cos(phi)*(np.abs(self.partial_V(self.x))),axis=0)
+#         phi_y = np.average(np.sin(phi)*(np.abs(self.partial_V(self.x))),axis=0)
+#         self.co_r = np.sqrt(phi_x**2+phi_y**2)
+#         self.co_phi = np.arctan2(phi_y,phi_x)
         
         
         
@@ -353,7 +353,7 @@ def measure(ptcl, number_X,L, f_init,f_fin,f_step, t_step):
        
     
 def simulate(N, L, l, a, f, muw,duration,Fs, name):
-    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=1, N_ptcl=N, v=0, mu=1, muw = muw)
+    RTP = RTP_lab(alpha=0.5, u=10, len_time=100, N_time=Fs,N_X=1, N_ptcl=N, v=0, mu=1, muw = muw)
     RTP.l = l
     RTP.L = L
     RTP.u = a*l*RTP.alpha/2
@@ -364,8 +364,8 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
     X_list = duration*[None]
     v_list = duration*[None]
     
-    co_r_list = duration*[None]
-    co_phi_list = duration*[None]
+#     co_r_list = duration*[None]
+#     co_phi_list = duration*[None]
     
 #     current_list = duration*[None]
     
@@ -387,8 +387,8 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
         
         X_list[i] = RTP.X
         v_list[i] = RTP.v
-        co_r_list[i] = RTP.co_r
-        co_phi_list[i] = RTP.co_phi
+#         co_r_list[i] = RTP.co_r
+#         co_phi_list[i] = RTP.co_phi
         
 
 
@@ -405,8 +405,8 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
     save_dict={}
     save_dict['X'] = X_list
     save_dict['v'] = v_list
-    save_dict['co_r'] = co_r_list
-    save_dict['co_phi'] = co_phi_list
+#     save_dict['co_r'] = co_r_list
+#     save_dict['co_phi'] = co_phi_list
 
     save_dict['muw'] = RTP.muw
 #     save_dict['current'] = pd.concat(current_list)
@@ -430,15 +430,45 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
 #     plt.title('active density')
 #     plt.show()
 
-def scan(fin,ffin,N,N_ptcl):
+def N_scan(fin,ffin,N,N_ptcl):
+    direc ='1216/'
+    rho=10
+    L=300
+    direc+='N/'+str(N_ptcl)+'/'
+    os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
     for i in trange(N):
         f = fin+(ffin-fin)*i/N
-        name = 'vscan2/'+ str(f)
-        simulate(N_ptcl, 300, 30, 1, f,0.1, 1000000,10000, name)
+        name = direc+ str(f)
+        l=30
+        alpha=1
+        Fs=10000
+        simulate(N_ptcl, L, l, alpha, f,1*rho*L/N_ptcl, 1000000,Fs, name)
+
+def rho_scan(fin,ffin,N,rho):
+    direc ='1210/'
+    N_ptcl = 10000
+    L=300
+    direc+='rho/'+str(rho)+'/'
+    os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
+    for i in trange(N):
+        f = fin+(ffin-fin)*i/N
+        name = direc+ str(f)
+        l=30
+        a=1
+        Fs=10000
+        simulate(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 1000000,Fs, name)
+        
+def L_scan(fin,ffin,N,L):
+    direc ='1211/'
+    N_ptcl=30*L
+    rho=10
+    direc+='L/'+str(L)+'/'
+    os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
+    for i in trange(N):
+        f = fin+(ffin-fin)*i/N
+        name = direc+ str(f)
+        l=30
+        a=1
+        Fs=10000
+        simulate(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 1000000,Fs, name)
     
-def denscan(Ninit, Nrat,N,Fs):
-    for i in range(N):
-        nptcl = Ninit*Nrat**i
-        L = 300*Nrat**i
-        name = 'dens3/'+str(Ninit)+'i'+str(i)+'Fs'+str(Fs)
-        simulate(nptcl,L,30,1,0.8,1,1000000, Fs,name)
