@@ -343,6 +343,58 @@ def time_moments(ptcl, number_X,L, f, t_step,  state):
     else:
         moments.to_csv(title, mode='a',header=False)
         
+def moments(N, L, l, a, f, muw,duration,Fs, name):
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=1000, N_ptcl=N, v=0, mu=1, muw = muw)
+    RTP.l = l
+    RTP.L = L
+    RTP.u = a*l*RTP.alpha/2
+    RTP.F = f*RTP.u/RTP.mu
+    
+    RTP.set_zero()
+        
+    RTP.muw =0
+    
+    
+    first=0
+    second=0
+    third=0
+    fourth=0
+    
+    for i in range(int(duration/5)):
+        RTP.time_evolve()
+    RTP.muw = muw
+    
+    
+    for i in trange(duration):
+        RTP.time_evolve()
+        
+        first += np.average(np.abs(RTP.v))
+        second  += np.average(np.abs(RTP.v)**2)
+        third  += np.average(np.abs(RTP.v)**3)
+        fourth  += np.average(np.abs(RTP.v)**4)
+    
+    first /=duration
+    second /=duration
+    third /=duration
+    fourth /=duration
+    
+    
+    save_dict={}
+    save_dict['first'] = first
+    save_dict['second'] = second
+    save_dict['third'] = third
+    save_dict['fourth'] = fourth
+
+    save_dict['muw'] = RTP.muw
+    save_dict['Fs'] = RTP.N_time
+    save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + 'a :'+str(a)
+ 
+    
+    state = os.getcwd()+'/data/'+str(name)+'.npz'
+#     os.makedirs(os.getcwd()+'/data/'+str(name),exist_ok=True)
+    np.savez(state, **save_dict)
+    
+    
     
 def measure(ptcl, number_X,L, f_init,f_fin,f_step, t_step):
     
@@ -472,4 +524,20 @@ def L_scan(fin,ffin,N,L):
         a=1
         Fs=10000
         simulate(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 1000000,Fs, name)
+        
+        
+def N_scan_moments(fin,ffin,N,N_ptcl):
+    direc ='1230/'
+    rho=1
+    L=300
+    direc+='N/'+str(N_ptcl)+'/'
+    os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
+    
+    for i in trange(N):
+        f = fin+(ffin-fin)*i/N
+        name = direc+ str(f)
+        l=30
+        alpha=1
+        Fs=10000
+        moments(N_ptcl, L, l, alpha, f,1*rho*L/N_ptcl, 1000000,Fs, name)
     
