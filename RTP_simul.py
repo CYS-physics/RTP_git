@@ -15,7 +15,6 @@ import sys
 
 
 
-
 class RTP_lab:     # OOP
     """basic model to simulate active Run and Tumble Particles interacting with passive object"""
     
@@ -344,7 +343,7 @@ def time_moments(ptcl, number_X,L, f, t_step,  state):
         moments.to_csv(title, mode='a',header=False)
         
 def moments(N, L, l, a, f, muw,duration,Fs, name):
-    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=1000, N_ptcl=N, v=0, mu=1, muw = muw)
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=100, N_ptcl=N, v=0, mu=1, muw = muw)
     RTP.l = l
     RTP.L = L
     RTP.u = a*l*RTP.alpha/2
@@ -355,10 +354,10 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     RTP.muw =0
     
     
-    first=0
-    second=0
-    third=0
-    fourth=0
+    first=np.zeros(RTP.N_X)
+    second=np.zeros(RTP.N_X)
+    third=np.zeros(RTP.N_X)
+    fourth=np.zeros(RTP.N_X)
     
     for i in range(int(duration/5)):
         RTP.time_evolve()
@@ -368,10 +367,10 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     for i in trange(duration):
         RTP.time_evolve()
         
-        first += np.average(np.abs(RTP.v))
-        second  += np.average(np.abs(RTP.v)**2)
-        third  += np.average(np.abs(RTP.v)**3)
-        fourth  += np.average(np.abs(RTP.v)**4)
+        first += np.abs(RTP.v)
+        second  += np.abs(RTP.v)**2
+        third  += np.abs(RTP.v)**3
+        fourth  += np.abs(RTP.v)**4
     
     first /=duration
     second /=duration
@@ -527,7 +526,7 @@ def L_scan(fin,ffin,N,L):
         
         
 def N_scan_moments(fin,ffin,N,N_ptcl):
-    direc ='1230/'
+    direc ='1231/'
     rho=1
     L=300
     direc+='N/'+str(N_ptcl)+'/'
@@ -538,6 +537,6 @@ def N_scan_moments(fin,ffin,N,N_ptcl):
         name = direc+ str(f)
         l=30
         alpha=1
-        Fs=10000
-        moments(N_ptcl, L, l, alpha, f,1*rho*L/N_ptcl, 1000000,Fs, name)
+        Fs=2000
+        moments(N_ptcl, L, l, alpha, f,1*rho*L/N_ptcl, 50000,Fs, name)
     
