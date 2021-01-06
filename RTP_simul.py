@@ -526,7 +526,7 @@ def L_scan(fin,ffin,N,L):
         
         
 def N_scan_moments(fin,ffin,N,N_ptcl):
-    direc ='1231/'
+    direc ='210106_1/'
     rho=1
     L=300
     direc+='N/'+str(N_ptcl)+'/'
@@ -537,6 +537,6 @@ def N_scan_moments(fin,ffin,N,N_ptcl):
         name = direc+ str(f)
         l=30
         alpha=1
-        Fs=2000
-        moments(N_ptcl, L, l, alpha, f,1*rho*L/N_ptcl, 50000,Fs, name)
+        Fs=1000
+        moments(N_ptcl, L, l, alpha, f,1*rho*L/N_ptcl, 10000,Fs, name)
     
