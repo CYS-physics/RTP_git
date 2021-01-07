@@ -257,6 +257,7 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     state = os.getcwd()+'/data/'+str(name)+'.npz'
 #     os.makedirs(os.getcwd()+'/data/'+str(name),exist_ok=True)
     np.savez(state, **save_dict)
+
     
     
     
@@ -391,7 +392,7 @@ def L_scan(fin,ffin,N,L):
         
         
 def N_scan_moments(fin,ffin,N,N_ptcl):
-    direc ='1231/'
+    direc ='210106/'
     rho=1
     L=300
     direc+='N/'+str(N_ptcl)+'/'
@@ -402,6 +403,7 @@ def N_scan_moments(fin,ffin,N,N_ptcl):
         name = direc+ str(f)
         l=30
         alpha=1
-        Fs=2000
-        moments(N_ptcl, L, l, alpha, f,1*rho*L/N_ptcl, 50000,Fs, name)
+        Fs=100
+        moments(N_ptcl, L, l, alpha, f,1*rho*L/N_ptcl, 10000,Fs, name)
+        torch.cuda.empty_cache()
     
