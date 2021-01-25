@@ -351,7 +351,7 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     
     RTP.set_zero()
         
-    RTP.muw =0
+    RTP.muw = muw
     
     
     first=np.zeros(RTP.N_X)
@@ -361,7 +361,7 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     
     for i in range(int(duration/5)):
         RTP.time_evolve()
-    RTP.muw = muw
+    
     
     
     for i in trange(duration):
@@ -526,7 +526,7 @@ def L_scan(fin,ffin,N,L):
         
         
 def N_scan_moments(fin,ffin,N,N_ptcl):
-    direc ='210106_1/'
+    direc ='210125/'
     rho=1
     L=300
     direc+='N/'+str(N_ptcl)+'/'
@@ -537,6 +537,6 @@ def N_scan_moments(fin,ffin,N,N_ptcl):
         name = direc+ str(f)
         l=30
         alpha=1
-        Fs=1000
-        moments(N_ptcl, L, l, alpha, f,1*rho*L/N_ptcl, 10000,Fs, name)
+        Fs=500
+        moments(N_ptcl, L, l, alpha, f,1*rho*L/N_ptcl, 50000,Fs, name)
     
