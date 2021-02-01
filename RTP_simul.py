@@ -526,7 +526,7 @@ def L_scan(fin,ffin,N,L):
         
         
 def N_scan_moments(fin,ffin,N,N_ptcl):
-    direc ='210125/'
+    direc ='210125_1/'
     rho=1
     L=300
     direc+='N/'+str(N_ptcl)+'/'

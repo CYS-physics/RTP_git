@@ -129,14 +129,14 @@ class RTP_lab:     # OOP
     # Dynamics part
     def set_zero(self):              # initializing simulation configurations
         self.time = np.linspace(0,self.len_time,num=self.N_simul)
-        self.s = (2*torch.bernoulli(0.5*torch.ones(self.N_ptcl,self.N_X))-1).to(device=cuda)          # random direction at initial time
-        self.x = torch.empty(self.N_ptcl,self.N_X).uniform_(-self.L/2, self.L/2).to(device=cuda)
-        self.X = torch.zeros(self.N_X).to(device=cuda)
-        self.v = torch.zeros(self.N_X).to(device=cuda)
+        self.s = (2*torch.bernoulli(0.5*torch.ones(self.N_ptcl,self.N_X))-1).to(device=cuda,dtype=torch.float64)          # random direction at initial time
+        self.x = torch.empty(self.N_ptcl,self.N_X).uniform_(-self.L/2, self.L/2).to(device=cuda,dtype=torch.float64)
+        self.X = torch.zeros(self.N_X).to(device=cuda,dtype=torch.float64)
+        self.v = torch.zeros(self.N_X).to(device=cuda,dtype=torch.float64)
     
     def tumble(self):             # random part of s dynamics
         p = 1-self.delta_time*self.alpha/2 # +1 no tumble, -1 tumble
-        tumble = (2*torch.bernoulli(p*torch.ones(self.N_ptcl,self.N_X))-1 ).to(device=cuda)
+        tumble = (2*torch.bernoulli(p*torch.ones(self.N_ptcl,self.N_X))-1 ).to(device=cuda,dtype=torch.float64)
         return tumble
     
     def dynamics(self,x,s):         # dynamics of x and s to give time difference of x and s
@@ -362,7 +362,7 @@ def L_scan(fin,ffin,N,L):
         
         
 def N_scan_moments(fin,ffin,N,N_ptcl):
-    direc ='1231/'
+    direc ='210125_1/'
     rho=1
     L=300
     direc+='N/'+str(N_ptcl)+'/'
@@ -373,7 +373,7 @@ def N_scan_moments(fin,ffin,N,N_ptcl):
         name = direc+ str(f)
         l=30
         a=1
-        Fs=2000
+        Fs=500
         moments(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 50000,Fs, name)
         torch.cuda.empty_cache()
     
