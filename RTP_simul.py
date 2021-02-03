@@ -403,7 +403,7 @@ def measure(ptcl, number_X,L, f_init,f_fin,f_step, t_step):
         time_moments(ptcl, number_X,L,f,t_step,state)
        
     
-def simulate(N, L, l, a, f, muw,duration,Fs, name):
+def simulate(N, L, l, a, f,duration,Fs, name):
     RTP = RTP_lab(alpha=0.5, u=10, len_time=100, N_time=Fs,N_X=1, N_ptcl=N, v=0, mu=1, muw = muw)
     RTP.l = l
     RTP.L = L
@@ -415,42 +415,19 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
     X_list = duration*[None]
     v_list = duration*[None]
     
-#     co_r_list = duration*[None]
-#     co_phi_list = duration*[None]
+
     
-#     current_list = duration*[None]
-    
-#     LL_list = duration*[None]
-#     LR_list = duration*[None]
-#     LD_list = duration*[None]
-#     RL_list = duration*[None]
-#     RR_list = duration*[None]
-#     RD_list = duration*[None]
-    
-    RTP.muw =0
+    RTP.muw = 1*L/RTP.N_ptcl
     
     for i in range(int(duration/5)):
         RTP.time_evolve()
-    RTP.muw = muw
     
     for i in trange(duration):
         RTP.time_evolve()
         
         X_list[i] = RTP.X
         v_list[i] = RTP.v
-#         co_r_list[i] = RTP.co_r
-#         co_phi_list[i] = RTP.co_phi
-        
 
-
-#         current_list[i] = pd.DataFrame(RTP.current)
-        
-#         LR_list[i] = pd.DataFrame(RTP.LR)
-#         LL_list[i] = pd.DataFrame(RTP.LL)
-#         LD_list[i] = pd.DataFrame(RTP.LD)
-#         RR_list[i] = pd.DataFrame(RTP.RR)
-#         RL_list[i] = pd.DataFrame(RTP.RL)
-#         RD_list[i] = pd.DataFrame(RTP.RD)
         
         
     save_dict={}
@@ -463,24 +440,12 @@ def simulate(N, L, l, a, f, muw,duration,Fs, name):
 #     save_dict['current'] = pd.concat(current_list)
     save_dict['Fs'] = RTP.N_time
     save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + 'a :'+str(a)
+
     
-#     save_dict['LR'] = pd.concat(LR_list)
-#     save_dict['LL'] = pd.concat(LL_list)
-#     save_dict['LD'] = pd.concat(LD_list)
-#     save_dict['RR'] = pd.concat(RR_list)
-#     save_dict['RL'] = pd.concat(RL_list)
-#     save_dict['RD'] = pd.concat(RD_list)
-    
-    
-    
-    state = os.getcwd()+'/data/'+str(name)+'.npz'
+    state = os.getcwd()+'/data/away/'+str(name)+'.npz'
 #     os.makedirs(os.getcwd()+'/data/'+str(name),exist_ok=True)
     np.savez(state, **save_dict)
     
-#     plt.hist(RTP.x,bins = 200)
-#     plt.title('active density')
-#     plt.show()
-
 def N_scan(fin,ffin,N,N_ptcl):
     direc ='1218/'
     rho=1

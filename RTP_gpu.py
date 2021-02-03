@@ -134,7 +134,7 @@ class RTP_lab:     # OOP
         self.X = torch.zeros(self.N_X).to(device=cuda,dtype=torch.float64)
         self.v = torch.zeros(self.N_X).to(device=cuda,dtype=torch.float64)
     
-    def tumble(self):             # random part of s dynamics
+    def tumble(self):             # random part of sle p dynamics
         p = 1-self.delta_time*self.alpha/2 # +1 no tumble, -1 tumble
         tumble = (2*torch.bernoulli(p*torch.ones(self.N_ptcl,self.N_X))-1 ).to(device=cuda,dtype=torch.float64)
         return tumble
@@ -311,7 +311,7 @@ def simulate(N, L, l, a, f,duration,Fs, name):
 
     
     
-    state = os.getcwd()+'/data/'+str(name)+'.npz'
+    state = os.getcwd()+'/data/away/'+str(name)+'.npz'
 #     os.makedirs(os.getcwd()+'/data/'+str(name),exist_ok=True)
     np.savez(state, **save_dict)
     
