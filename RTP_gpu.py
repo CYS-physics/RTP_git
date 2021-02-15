@@ -208,7 +208,7 @@ class RTP_lab:     # OOP
    
         
 def moments(N, L, l, a, f, muw,duration,Fs, name):
-    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=100, N_ptcl=N, v=0, mu=1, muw = muw)
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=200, N_ptcl=N, v=0, mu=1, muw = muw)
     RTP.l = l
     RTP.L = L
     RTP.u = a*l*RTP.alpha/2
@@ -224,8 +224,8 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     third=np.zeros(RTP.N_X)
     fourth=np.zeros(RTP.N_X)
     
-    for i in range(int(duration/5)):
-        RTP.time_evolve()
+#     for i in range(int(duration/5)):
+#         RTP.time_evolve()
     RTP.muw = muw
     
     
@@ -251,7 +251,7 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
 
     save_dict['muw'] = RTP.muw
     save_dict['Fs'] = RTP.N_time
-    save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + 'a :'+str(a)
+    save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + ', a :'+str(a)
  
     
     state = os.getcwd()+'/data/'+str(name)+'.npz'
@@ -285,8 +285,8 @@ def simulate(N, L, l, a, f,duration,Fs, name):
     
     RTP.muw = 1*L/RTP.N_ptcl
     
-    for i in range(int(duration/5)):
-        RTP.time_evolve()
+#     for i in range(int(duration/5)):
+#         RTP.time_evolve()
     
     
     for i in trange(duration):
@@ -310,9 +310,8 @@ def simulate(N, L, l, a, f,duration,Fs, name):
     
 
     
-    
-    state = os.getcwd()+'/data/away/'+str(name)+'.npz'
-#     os.makedirs(os.getcwd()+'/data/'+str(name),exist_ok=True)
+    state = os.getcwd()+'/data/away/210205/'+str(name)+'.npz'
+    os.makedirs(os.getcwd()+'/data/away/210205',exist_ok=True)
     np.savez(state, **save_dict)
     
 
@@ -373,7 +372,7 @@ def N_scan_moments(fin,ffin,N,N_ptcl):
         name = direc+ str(f)
         l=30
         a=1
-        Fs=500
+        Fs=100
         moments(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 50000,Fs, name)
         torch.cuda.empty_cache()
     

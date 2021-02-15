@@ -343,7 +343,7 @@ def time_moments(ptcl, number_X,L, f, t_step,  state):
         moments.to_csv(title, mode='a',header=False)
         
 def moments(N, L, l, a, f, muw,duration,Fs, name):
-    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=100, N_ptcl=N, v=0, mu=1, muw = muw)
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=200, N_ptcl=N, v=0, mu=1, muw = muw)
     RTP.l = l
     RTP.L = L
     RTP.u = a*l*RTP.alpha/2
@@ -359,8 +359,8 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     third=np.zeros(RTP.N_X)
     fourth=np.zeros(RTP.N_X)
     
-    for i in range(int(duration/5)):
-        RTP.time_evolve()
+#     for i in range(int(duration/5)):
+#         RTP.time_evolve()
     
     
     
@@ -386,7 +386,7 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
 
     save_dict['muw'] = RTP.muw
     save_dict['Fs'] = RTP.N_time
-    save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + 'a :'+str(a)
+    save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + ', a :'+str(a)
  
     
     state = os.getcwd()+'/data/'+str(name)+'.npz'
@@ -404,7 +404,7 @@ def measure(ptcl, number_X,L, f_init,f_fin,f_step, t_step):
        
     
 def simulate(N, L, l, a, f,duration,Fs, name):
-    RTP = RTP_lab(alpha=0.5, u=10, len_time=100, N_time=Fs,N_X=1, N_ptcl=N, v=0, mu=1, muw = muw)
+    RTP = RTP_lab(alpha=0.5, u=10, len_time=100, N_time=Fs,N_X=1, N_ptcl=N, v=0, mu=1, muw = 1)
     RTP.l = l
     RTP.L = L
     RTP.u = a*l*RTP.alpha/2
@@ -419,8 +419,8 @@ def simulate(N, L, l, a, f,duration,Fs, name):
     
     RTP.muw = 1*L/RTP.N_ptcl
     
-    for i in range(int(duration/5)):
-        RTP.time_evolve()
+#     for i in range(int(duration/5)):
+#         RTP.time_evolve()
     
     for i in trange(duration):
         RTP.time_evolve()
@@ -442,8 +442,8 @@ def simulate(N, L, l, a, f,duration,Fs, name):
     save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + 'a :'+str(a)
 
     
-    state = os.getcwd()+'/data/away/'+str(name)+'.npz'
-#     os.makedirs(os.getcwd()+'/data/'+str(name),exist_ok=True)
+    state = os.getcwd()+'/data/away/210215/'+str(name)+'.npz'
+    os.makedirs(os.getcwd()+'/data/away/210215/'+str(N),exist_ok=True)
     np.savez(state, **save_dict)
     
 def N_scan(fin,ffin,N,N_ptcl):
@@ -501,7 +501,11 @@ def N_scan_moments(fin,ffin,N,N_ptcl):
         f = fin+(ffin-fin)*i/N
         name = direc+ str(f)
         l=30
-        alpha=1
-        Fs=500
-        moments(N_ptcl, L, l, alpha, f,1*rho*L/N_ptcl, 50000,Fs, name)
+        a=1
+        Fs=100
+        moments(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 50000,Fs, name)
     
+def simul_scan(f_init, f_fin, N, N_ptcl):
+    for i in trange(N):
+        f=f_init+i*(f_fin-f_init)/N
+        simulate(N_ptcl,300,30,1,f,1000000,100,str(N_ptcl)+'/'+str(f))
