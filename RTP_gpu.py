@@ -208,7 +208,7 @@ class RTP_lab:     # OOP
    
         
 def moments(N, L, l, a, f, muw,duration,Fs, name):
-    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=200, N_ptcl=N, v=0, mu=1, muw = muw)
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=20, N_ptcl=N, v=0, mu=1, muw = muw)
     RTP.l = l
     RTP.L = L
     RTP.u = a*l*RTP.alpha/2
@@ -373,6 +373,6 @@ def N_scan_moments(fin,ffin,N,N_ptcl):
         l=30
         a=1
         Fs=100
-        moments(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 50000,Fs, name)
+        moments(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 200000,Fs, name)
         torch.cuda.empty_cache()
     

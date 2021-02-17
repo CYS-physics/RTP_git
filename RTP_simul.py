@@ -404,6 +404,9 @@ def measure(ptcl, number_X,L, f_init,f_fin,f_step, t_step):
        
     
 def simulate(N, L, l, a, f,duration,Fs, name):
+    state = os.getcwd()+'/data/away/210215/'+str(name)+'.npz'
+    os.makedirs(os.getcwd()+'/data/away/210215/'+str(N),exist_ok=True)
+    
     RTP = RTP_lab(alpha=0.5, u=10, len_time=100, N_time=Fs,N_X=1, N_ptcl=N, v=0, mu=1, muw = 1)
     RTP.l = l
     RTP.L = L
@@ -442,8 +445,7 @@ def simulate(N, L, l, a, f,duration,Fs, name):
     save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + 'a :'+str(a)
 
     
-    state = os.getcwd()+'/data/away/210215/'+str(name)+'.npz'
-    os.makedirs(os.getcwd()+'/data/away/210215/'+str(N),exist_ok=True)
+    
     np.savez(state, **save_dict)
     
 def N_scan(fin,ffin,N,N_ptcl):
