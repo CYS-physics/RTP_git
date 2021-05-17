@@ -4,6 +4,7 @@
 # Yongjoo Baek, Ki-won Kim and Yunsik Choe
 # numerics done by Yunsik Choe
 # 200920
+# private
 
 import numpy as np                   # numerical calculation
 import pandas as pd                  # data processing
