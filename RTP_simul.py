@@ -355,10 +355,10 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     RTP.muw = muw
     
     
-    first=np.zeros(RTP.N_X)
-    second=np.zeros(RTP.N_X)
-    third=np.zeros(RTP.N_X)
-    fourth=np.zeros(RTP.N_X)
+    first=np.zeros(duration)
+    second=np.zeros(duration)
+    third=np.zeros(duration)
+    fourth=np.zeros(duration)
     
 #     for i in range(int(duration/5)):
 #         RTP.time_evolve()
@@ -370,15 +370,11 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     for i in trange(duration):
         RTP.time_evolve()
         
-        first += np.abs(RTP.v)/(RTP.u)
-        second  += np.abs(RTP.v)**2/(RTP.u)**2
-        third  += np.abs(RTP.v)**3/(RTP.u)**3
-        fourth  += np.abs(RTP.v)**4/(RTP.u)**4
+        first[i] = np.average(np.abs(RTP.v))
+        second[i]  = np.average(np.abs(RTP.v)**2)
+        third[i]  = np.average(np.abs(RTP.v)**3)
+        fourth[i]  = np.average(np.abs(RTP.v)**4)
     
-    first /=duration
-    second /=duration
-    third /=duration
-    fourth /=duration
     
     
     save_dict={}

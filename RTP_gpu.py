@@ -219,10 +219,10 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     RTP.muw =0
     
     
-    first=np.zeros(RTP.N_X)
-    second=np.zeros(RTP.N_X)
-    third=np.zeros(RTP.N_X)
-    fourth=np.zeros(RTP.N_X)
+    first=np.zeros(duration)
+    second=np.zeros(duration)
+    third=np.zeros(duration)
+    fourth=np.zeros(duration)
     
 #     for i in range(int(duration/5)):
 #         RTP.time_evolve()
@@ -235,15 +235,11 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     for i in trange(duration):
         RTP.time_evolve()
         
-        first += (torch.abs(RTP.v)/(RTP.u)).to(device=cpu).numpy()
-        second  += (torch.abs(RTP.v**2)/(RTP.u)**2).to(device=cpu).numpy()
-        third  += (torch.abs(RTP.v**3)/(RTP.u)**3).to(device=cpu).numpy()
-        fourth  += (torch.abs(RTP.v**4)/(RTP.u)**4).to(device=cpu).numpy()
+        first[i]= np.average((torch.abs(RTP.v)).to(device=cpu).numpy())
+        second[i]= np.average((torch.abs(RTP.v**2)).to(device=cpu).numpy())
+        third[i]= np.average((torch.abs(RTP.v**3)).to(device=cpu).numpy())
+        fourth[i]= np.average((torch.abs(RTP.v**4)).to(device=cpu).numpy())
     
-    first /=duration
-    second /=duration
-    third /=duration
-    fourth /=duration
     
     
     save_dict={}
