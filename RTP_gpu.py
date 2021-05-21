@@ -235,10 +235,10 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     for i in trange(duration):
         RTP.time_evolve()
         
-        first += (torch.abs(RTP.v)/torch.abs(RTP.u)).to(device=cpu).numpy()
-        second  += (torch.abs(RTP.v**2)/torch.abs(RTP.u)**2).to(device=cpu).numpy()
-        third  += (torch.abs(RTP.v**3)/torch.abs(RTP.u)**3).to(device=cpu).numpy()
-        fourth  += (torch.abs(RTP.v**4)/torch.abs(RTP.u)**4).to(device=cpu).numpy()
+        first += (torch.abs(RTP.v)/(RTP.u)).to(device=cpu).numpy()
+        second  += (torch.abs(RTP.v**2)/(RTP.u)**2).to(device=cpu).numpy()
+        third  += (torch.abs(RTP.v**3)/(RTP.u)**3).to(device=cpu).numpy()
+        fourth  += (torch.abs(RTP.v**4)/(RTP.u)**4).to(device=cpu).numpy()
     
     first /=duration
     second /=duration
@@ -381,7 +381,7 @@ def N_scan_moments(fin,ffin,N,N_ptcl):
         
 def l_scan_moments(fin,ffin,N,a,N_ptcl):
     
-    direc ='210520/'
+    direc ='210521/'
     rho=1
     L=300
     direc+='a/'+str(a)+'/N/'+str(N_ptcl)+'/'

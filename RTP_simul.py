@@ -370,10 +370,10 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     for i in trange(duration):
         RTP.time_evolve()
         
-        first += np.abs(RTP.v)
-        second  += np.abs(RTP.v)**2
-        third  += np.abs(RTP.v)**3
-        fourth  += np.abs(RTP.v)**4
+        first += np.abs(RTP.v)/(RTP.u)
+        second  += np.abs(RTP.v)**2/(RTP.u)**2
+        third  += np.abs(RTP.v)**3/(RTP.u)**3
+        fourth  += np.abs(RTP.v)**4/(RTP.u)**4
     
     first /=duration
     second /=duration
@@ -518,7 +518,7 @@ def simul_scan(f_init, f_fin, N, N_ptcl):
         
 def l_scan_moments(fin,ffin,N,a,N_ptcl):
     
-    direc ='210520/'
+    direc ='210521/'
     rho=1
     L=300
     direc+='a/'+str(a)+'/N/'+str(N_ptcl)+'/'
