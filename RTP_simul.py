@@ -364,7 +364,9 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
 #         RTP.time_evolve()
     
     
-    
+    for i in trange(int(duration/5)):
+        RTP.time_evolve()
+        
     for i in trange(duration):
         RTP.time_evolve()
         
@@ -516,7 +518,7 @@ def simul_scan(f_init, f_fin, N, N_ptcl):
         
 def l_scan_moments(fin,ffin,N,a,N_ptcl):
     
-    direc ='210430/'
+    direc ='210520/'
     rho=1
     L=300
     direc+='a/'+str(a)+'/N/'+str(N_ptcl)+'/'
@@ -529,4 +531,47 @@ def l_scan_moments(fin,ffin,N,a,N_ptcl):
         Fs=2000
         moments(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 50000,Fs, name)
         
+        
+def density_scan(N, f_init, f_fin, N_f,group_name):
+    a=1.1
+    Fs=2000
+    rho = 1
+    L=300
+    l=30
+    muw = rho*L/N
+    f_axis = np.linspace(f_init,f_fin,N_f)
+    binning = np.linspace(-1,1,200)
+
+    for f in f_axis:
+        name = str(N)+'_'+str(f)
+        R1 = RTP_lab(N_time = Fs, N_X = 32, N_ptcl = N)
+        R1.L=L
+        R1.l=l/a
+        R1.u = a*l*R1.alpha/2
+        R1.F = f*R1.u/R1.mu
+        
+        state = os.getcwd()+'/data/density/210519/'+str(group_name)+'/'+str(name)+'.npz'
+        os.makedirs(os.getcwd()+'/data/density/210519/'+str(group_name),exist_ok=True)
+
+        for i in trange(50000):
+            R1.time_evolve()
+        n,bins,patches = plt.hist(R1.v.flatten()/R1.u, bins = binning, density = True)
+        for i in trange(9999):
+            R1.time_evolve()
+            n_temp,__,_ = plt.hist(R1.v.flatten()/R1.u, bins = binning, density = True)
+            plt.clf()
+            n+=n_temp
+        n/=10000  
+        
+        save_dict={}
+        save_dict['N'] = N
+        save_dict['a'] = a
+        save_dict['f'] = f
+        save_dict['L'] = L
+        save_dict['l'] = l
+        save_dict['Fs'] = Fs
+        save_dict['n'] = n
+        save_dict['bins'] = bins
+        
+        np.savez(state, **save_dict)
         

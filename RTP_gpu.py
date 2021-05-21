@@ -228,14 +228,17 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
 #         RTP.time_evolve()
     RTP.muw = muw
     
+    for i in trange(int(duration/5)):
+        RTP.time_evolve()
+    
     
     for i in trange(duration):
         RTP.time_evolve()
         
-        first += (torch.abs(RTP.v)).to(device=cpu).numpy()
-        second  += (torch.abs(RTP.v**2)).to(device=cpu).numpy()
-        third  += (torch.abs(RTP.v**3)).to(device=cpu).numpy()
-        fourth  += (torch.abs(RTP.v**4)).to(device=cpu).numpy()
+        first += (torch.abs(RTP.v)/torch.abs(RTP.u)).to(device=cpu).numpy()
+        second  += (torch.abs(RTP.v**2)/torch.abs(RTP.u)**2).to(device=cpu).numpy()
+        third  += (torch.abs(RTP.v**3)/torch.abs(RTP.u)**3).to(device=cpu).numpy()
+        fourth  += (torch.abs(RTP.v**4)/torch.abs(RTP.u)**4).to(device=cpu).numpy()
     
     first /=duration
     second /=duration
@@ -378,7 +381,7 @@ def N_scan_moments(fin,ffin,N,N_ptcl):
         
 def l_scan_moments(fin,ffin,N,a,N_ptcl):
     
-    direc ='210430/'
+    direc ='210520/'
     rho=1
     L=300
     direc+='a/'+str(a)+'/N/'+str(N_ptcl)+'/'
@@ -391,5 +394,46 @@ def l_scan_moments(fin,ffin,N,a,N_ptcl):
         Fs=2000
         moments(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 50000,Fs, name)
         
+def density_scan(N, f_init, f_fin, N_f,group_name):
+    a=1.1
+    Fs=2000
+    rho = 1
+    L=300
+    l=30
+    muw = rho*L/N
+    f_axis = np.linspace(f_init,f_fin,N_f)
+    binning = np.linspace(-1,1,200)
+
+    for f in f_axis:
+        name = str(N)+'_'+str(f)
+        R1 = RTP_lab(N_time = Fs, N_X = 32, N_ptcl = N)
+        R1.L=L
+        R1.l=l/a
+        R1.u = a*l*R1.alpha/2
+        R1.F = f*R1.u/R1.mu
         
-    
+        state = os.getcwd()+'/data/density/210519/'+str(group_name)+'/'+str(name)+'.npz'
+        os.makedirs(os.getcwd()+'/data/density/210519/'+str(group_name),exist_ok=True)
+
+        for i in trange(50000):
+            R1.time_evolve()
+        n,bins,patches = plt.hist(R1.v.to(device=torch.device('cpu')).numpy().flatten()/R1.u, bins = binning, density = True)
+        for i in trange(9999):
+            R1.time_evolve()
+            n_temp,__,_ = plt.hist(R1.v.to(device=torch.device('cpu')).numpy().flatten()/R1.u, bins = binning, density = True)
+            n+=n_temp
+            plt.clf()
+        n/=10000  
+        
+        save_dict={}
+        save_dict['N'] = N
+        save_dict['a'] = a
+        save_dict['f'] = f
+        save_dict['L'] = L
+        save_dict['l'] = l
+        save_dict['Fs'] = Fs
+        save_dict['n'] = n
+        save_dict['bins'] = bins
+        
+        np.savez(state, **save_dict)
+        torch.cuda.empty_cache()
