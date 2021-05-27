@@ -364,7 +364,7 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
 #         RTP.time_evolve()
     
     
-    for i in trange(int(duration/5)):
+    for i in trange(duration*5):
         RTP.time_evolve()
         
     for i in trange(duration):
@@ -514,7 +514,7 @@ def simul_scan(f_init, f_fin, N, N_ptcl):
         
 def l_scan_moments(fin,ffin,N,a,N_ptcl):
     
-    direc ='210521/'
+    direc ='210526/'
     rho=1
     L=300
     direc+='a/'+str(a)+'/N/'+str(N_ptcl)+'/'
@@ -524,8 +524,8 @@ def l_scan_moments(fin,ffin,N,a,N_ptcl):
         f = fin+(ffin-fin)*i/N
         name = direc+ str(f)
         l=30/a
-        Fs=2000
-        moments(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 50000,Fs, name)
+        Fs=1000
+        moments(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 20000,Fs, name)
         
         
 def density_scan(N, f_init, f_fin, N_f,group_name):
