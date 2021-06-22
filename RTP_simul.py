@@ -106,23 +106,13 @@ class RTP_lab:     # OOP
         E = (-self.d/self.k<=y)*(y<=self.d/self.k)# center boundary
         
         output[A]+=self.F/(1+np.exp(-self.k*(y[A]+self.l/2)))
-        #output[A]+=self.F/2*(1+(y[A]-self.l/2)/d)
         output[B]+=self.F
         output[C]-=self.F
         output[D]-=self.F/(1+np.exp(self.k*(y[D]-self.l/2)))
         output[E]+=self.F* (  np.exp(-self.k*(y[E])) - np.exp(self.k*(y[E]))  )/(   np.exp(-self.k*(y[E]))  +  np.exp(self.k*(y[E]))  )
-        #output[D]+=self.F/2*(1-(y[D]+self.l/2)/d)
         
         return output
         
-        #return self.F*(-self.l/2+d/k<=y)*(y<0)  -   self.F*(0<y)*(y<=self.l/2-d/k)    +  self.F/(1+np.exp(-k*(y+self.l/2))) * (-self.l/2-d/k<y)*(y<-self.l/2+d/k)             -    self.F/(1+np.exp(k*(y-self.l/2)))   * (self.l/2-d/k<y)*(y<self.l/2+d/k)
-
-        #return self.F/(1+np.exp(-k*(y+self.l/2))) * (y<0)             -    self.F/(1+np.exp(k*(y-self.l/2)))   * (0<y)
-           # sigmoid approximation
-        
-
-    
-    
         
         
         
@@ -144,25 +134,6 @@ class RTP_lab:     # OOP
         dxa = self.u*self.delta_time
         ds = self.tumble()
         
-        
-#         sm = (s+s*ds)/2    # s at mid-time
-#         sf = s*ds          # s ar final
-        
-#         # RK4 method to compute wall repulsion
-#         dxp1 = (-self.mu*self.partial_V(x))*self.delta_time
-#         x1 = x + 0.5*(dxa*sm+dxp1)
-#         dxp2 = (-self.mu*self.partial_V(x1))*self.delta_time
-#         x2 = x + 0.5*(dxa*sm+dxp2)
-#         dxp3 = (-self.mu*self.partial_V(x2))*self.delta_time
-#         x3 = x + (dxa*sf+dxp3)
-#         dxp4 = (-self.mu*self.partial_V(x3))*self.delta_time
-        
-#         dx = dxa*sm + 1/6 *(1*dxp1+2*dxp2+2*dxp3+1*dxp4)
-        
-        
-        
-#         v = -self.muw/self.mu*np.sum(1/6*(dxp1+ 2*dxp2 + 2*dxp3 + dxp4) ,axis=0)/self.delta_time
-
         dx = dxa*s  -self.mu*self.partial_V(x)*self.delta_time
         if self.model==3:
             v = self.muw*np.sum(self.partial_V(x),axis=0)
@@ -176,30 +147,12 @@ class RTP_lab:     # OOP
         
     def time_evolve(self):
         (v, dx, ds) = self.dynamics(self.x, self.s)
+        
         self.v = v
+        self.dS1 = -np.average(self.partial_V(self.x+dx/2-v*self.delta_time/2)*(dx-v*self.delta_time),axis=0)
+        self.dS2 = (self.u/self.mu)*np.average(self.s*dx,axis=0)
         
-#         y=self.periodic(self.x-self.X)
-#         self.current =np.sum(self.s*(y>=-self.l/2-self.d/self.k)*(y<=self.l/2+self.d/self.k),axis=0)         # difference of right moving and left moving active particle numbers in contact with object, see for mail from YB Sept,20, 20
-        
-#         self.LR =np.sum(self.s*(y>=-self.l/2+self.d/self.k)*(y<=0)*(self.s==1),axis=0)  # left side right moving
-#         self.LL =np.sum(self.s*(y>=-self.l/2+self.d/self.k)*(y<=0)*(self.s==-1),axis=0)
-#         self.LD =np.sum(self.s*(y>=-self.l/2-self.d/self.k)*(y<=-self.l/2+self.d/self.k)*(self.s==1),axis=0)
-#         self.RR =np.sum(self.s*(y>=0)*(y<=self.l/2-self.d/self.k)*(self.s==1),axis=0)
-#         self.RL =np.sum(self.s*(y>=0)*(y<=self.l/2-self.d/self.k)*(self.s==-1),axis=0)
-#         self.RD =np.sum(self.s*(y>=self.l/2-self.d/self.k)*(y<=self.l/2+self.d/self.k)*(self.s==-1),axis=0)
-
-
-        # coherence measure
-#         phi = 2*np.pi*(self.x/self.L)
-        
-#         phi_x = np.average(np.cos(phi)*(np.abs(self.partial_V(self.x))),axis=0)
-#         phi_y = np.average(np.sin(phi)*(np.abs(self.partial_V(self.x))),axis=0)
-#         self.co_r = np.sqrt(phi_x**2+phi_y**2)
-#         self.co_phi = np.arctan2(phi_y,phi_x)
-        
-        
-        
-        
+          
         self.x += dx                     # active particles movement
         self.s *= ds                     # direction of movement changed if the tumble is true
         self.X += v*self.delta_time           # passive object movement
@@ -207,11 +160,6 @@ class RTP_lab:     # OOP
         self.x = self.periodic(self.x)
         self.X = self.periodic(self.X)
         
-        
-
-            
-            
-            
             
             
             
@@ -437,10 +385,10 @@ def measure(ptcl, number_X,L, f_init,f_fin,f_step, t_step):
        
     
 def simulate(N, L, l, a, f,duration,Fs, name):
-    state = os.getcwd()+'/data/away/210215/'+str(name)+'.npz'
-    os.makedirs(os.getcwd()+'/data/away/210215/'+str(N),exist_ok=True)
+    state = os.getcwd()+'/data/dS/210622/'+str(name)+'.npz'
+    os.makedirs(os.getcwd()+'/data/dS/210622/'+str(N),exist_ok=True)
     
-    RTP = RTP_lab(alpha=0.5, u=10, len_time=100, N_time=Fs,N_X=1, N_ptcl=N, v=0, mu=1, muw = 1)
+    RTP = RTP_lab(alpha=1, u=10, len_time=1000, N_time=Fs,N_X=10, N_ptcl=N, v=0, mu=1, muw = 1)
     RTP.l = l
     RTP.L = L
     RTP.u = a*l*RTP.alpha/2
@@ -450,6 +398,8 @@ def simulate(N, L, l, a, f,duration,Fs, name):
     
     X_list = duration*[None]
     v_list = duration*[None]
+    dS1_list = duration*[None]
+    dS2_list = duration*[None]
     
 
     
@@ -461,16 +411,20 @@ def simulate(N, L, l, a, f,duration,Fs, name):
     for i in trange(duration):
         RTP.time_evolve()
         
-        X_list[i] = RTP.X
+#         X_list[i] = RTP.X
         v_list[i] = RTP.v
+        dS1_list[i] = RTP.dS1
+        dS2_list[i] = RTP.dS2
 
         
         
     save_dict={}
     save_dict['X'] = X_list
     save_dict['v'] = v_list
-#     save_dict['co_r'] = co_r_list
-#     save_dict['co_phi'] = co_phi_list
+    save_dict['dS1'] = dS1_list
+    save_dict['dS2'] = dS2_list
+
+    save_dict['u'] = RTP.u
 
     save_dict['muw'] = RTP.muw
 #     save_dict['current'] = pd.concat(current_list)
@@ -543,7 +497,7 @@ def N_scan_moments(fin,ffin,N,N_ptcl):
 def simul_scan(f_init, f_fin, N, N_ptcl):
     for i in trange(N):
         f=f_init+i*(f_fin-f_init)/N
-        simulate(N_ptcl,300,30,1,f,1000000,100,str(N_ptcl)+'/'+str(f))
+        simulate(N_ptcl,300,30,1,f,1000000,1000,str(N_ptcl)+'/'+str(f))
         
         
 def l_scan_moments(fin,ffin,N,a,N_ptcl):
@@ -564,34 +518,35 @@ def l_scan_moments(fin,ffin,N,a,N_ptcl):
         
 def density_scan(N, f_init, f_fin, N_f,group_name):
     a=1.1
-    Fs=2000
+    Fs=1000
     rho = 1
     L=300
     l=30
     muw = rho*L/N
-    f_axis = np.linspace(f_init,f_fin,N_f)
     binning = np.linspace(-1,1,200)
 
-    for f in f_axis:
+    for i in trange(N_f):
+        f = f_fin+(f_fin-f_init)*i/N_f
         name = str(N)+'_'+str(f)
         R1 = RTP_lab(N_time = Fs, N_X = 32, N_ptcl = N)
         R1.L=L
         R1.l=l/a
+        R1.muw=muw
         R1.u = a*l*R1.alpha/2
         R1.F = f*R1.u/R1.mu
         
-        state = os.getcwd()+'/data/density/210519/'+str(group_name)+'/'+str(name)+'.npz'
-        os.makedirs(os.getcwd()+'/data/density/210519/'+str(group_name),exist_ok=True)
+        state = os.getcwd()+'/data/density/210616/'+str(group_name)+'/'+str(name)+'.npz'
+        os.makedirs(os.getcwd()+'/data/density/210616/'+str(group_name),exist_ok=True)
 
-        for i in trange(50000):
+        for i in trange(200000):
             R1.time_evolve()
         n,bins,patches = plt.hist(R1.v.flatten()/R1.u, bins = binning, density = True)
-        for i in trange(9999):
+        for i in trange(49999):
             R1.time_evolve()
             n_temp,__,_ = plt.hist(R1.v.flatten()/R1.u, bins = binning, density = True)
             plt.clf()
             n+=n_temp
-        n/=10000  
+        n/=50000  
         
         save_dict={}
         save_dict['N'] = N
@@ -605,3 +560,18 @@ def density_scan(N, f_init, f_fin, N_f,group_name):
         
         np.savez(state, **save_dict)
         
+        
+def dS_scan(fin,ffin,N,a,N_ptcl):
+    
+    direc ='210620/'
+    rho=1
+    L=300
+    direc+='a/'+str(a)+'/N/'+str(N_ptcl)+'/'
+    os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
+    
+    for i in trange(N):
+        f = fin+(ffin-fin)*i/N
+        name = direc+ str(f)
+        l=30/a
+        Fs=1000
+        moments(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 300000,Fs, name)

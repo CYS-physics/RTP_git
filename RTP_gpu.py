@@ -155,6 +155,9 @@ class RTP_lab:     # OOP
         
     def time_evolve(self):
         (v, dx, ds) = self.dynamics(self.x, self.s)
+        
+        self.dS1 = -torch.mean(self.partial_V(self.x+dx/2-v*self.delta_time/2)*(dx-v*self.delta_time),axis=0)
+        self.dS2 = (self.u/self.mu)*torch.mean(self.s*dx,axis=0)
         self.v = v
        
         self.x += dx                     # active particles movement
@@ -301,7 +304,10 @@ def measure(ptcl, number_X,L, f_init,f_fin,f_step, t_step):
        
     
 def simulate(N, L, l, a, f,duration,Fs, name):
-    RTP = RTP_lab(alpha=0.5, u=10, len_time=100, N_time=Fs,N_X=1, N_ptcl=N, v=0, mu=1)
+    state = os.getcwd()+'/data/dS/210622/'+str(name)+'.npz'
+    os.makedirs(os.getcwd()+'/data/dS/210622',exist_ok=True)
+    
+    RTP = RTP_lab(alpha=0.5, u=10, len_time=100, N_time=Fs,N_X=10, N_ptcl=N, v=0, mu=1)
     RTP.l = l
     RTP.L = L
     RTP.u = a*l*RTP.alpha/2
@@ -311,6 +317,8 @@ def simulate(N, L, l, a, f,duration,Fs, name):
     
     X_list = duration*[None]
     v_list = duration*[None]
+    dS1_list = duration*[None]
+    dS2_list = duration*[None]
     
 
     
@@ -323,26 +331,28 @@ def simulate(N, L, l, a, f,duration,Fs, name):
     for i in trange(duration):
         RTP.time_evolve()
         
-        X_list[i] = RTP.X.to(device=cpu).numpy()
+#         X_list[i] = RTP.X.to(device=cpu).numpy()
         v_list[i] = RTP.v.to(device=cpu).numpy()
+        dS1_list[i] = RTP.dS1.to(device=cpu).numpy()
+        dS2_list[i] = RTP.dS2.to(device=cpu).numpy()
 
         
         
     save_dict={}
     save_dict['X'] = X_list
     save_dict['v'] = v_list
-#     save_dict['co_r'] = co_r_list
-#     save_dict['co_phi'] = co_phi_list
+    save_dict['dS1'] = dS1_list
+    save_dict['dS2'] = dS2_list
+
+    save_dict['u'] = RTP.u
 
     save_dict['muw'] = RTP.muw
-#     save_dict['current'] = pd.concat(current_list)
     save_dict['Fs'] = RTP.N_time
     save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + 'a :'+str(a)
     
 
     
-    state = os.getcwd()+'/data/away/210205/'+str(name)+'.npz'
-    os.makedirs(os.getcwd()+'/data/away/210205',exist_ok=True)
+    
     np.savez(state, **save_dict)
     
 
@@ -422,37 +432,43 @@ def l_scan_moments(fin,ffin,N,a,N_ptcl):
         l=30/a
         Fs=1000
         moments(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 300000,Fs, name)
+def simul_scan(f_init, f_fin, N, N_ptcl):
+    for i in trange(N):
+        f=f_init+i*(f_fin-f_init)/N
+        simulate(N_ptcl,300,30,1,f,1000000,1000,str(N_ptcl)+'/'+str(f))
+     
         
 def density_scan(N, f_init, f_fin, N_f,group_name):
     a=1.1
-    Fs=2000
+    Fs=1000
     rho = 1
     L=300
     l=30
     muw = rho*L/N
-    f_axis = np.linspace(f_init,f_fin,N_f)
     binning = np.linspace(-1,1,200)
 
-    for f in f_axis:
+    for i in trange(N_f):
+        f = f_fin+(f_fin-f_init)*i/N_f
         name = str(N)+'_'+str(f)
         R1 = RTP_lab(N_time = Fs, N_X = 32, N_ptcl = N)
+        R1.muw = muw
         R1.L=L
         R1.l=l/a
         R1.u = a*l*R1.alpha/2
         R1.F = f*R1.u/R1.mu
         
-        state = os.getcwd()+'/data/density/210519/'+str(group_name)+'/'+str(name)+'.npz'
-        os.makedirs(os.getcwd()+'/data/density/210519/'+str(group_name),exist_ok=True)
+        state = os.getcwd()+'/data/density/210616/'+str(group_name)+'/'+str(name)+'.npz'
+        os.makedirs(os.getcwd()+'/data/density/210616/'+str(group_name),exist_ok=True)
 
-        for i in trange(50000):
+        for i in trange(300000):
             R1.time_evolve()
         n,bins,patches = plt.hist(R1.v.to(device=torch.device('cpu')).numpy().flatten()/R1.u, bins = binning, density = True)
-        for i in trange(9999):
+        for i in trange(49999):
             R1.time_evolve()
             n_temp,__,_ = plt.hist(R1.v.to(device=torch.device('cpu')).numpy().flatten()/R1.u, bins = binning, density = True)
             n+=n_temp
             plt.clf()
-        n/=10000  
+        n/=50000  
         
         save_dict={}
         save_dict['N'] = N
