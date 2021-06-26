@@ -523,7 +523,10 @@ def density_scan(N, f_init, f_fin, N_f,group_name):
     L=300
     l=30
     muw = rho*L/N
-    binning = np.linspace(-1,1,200)
+    vu_axis = np.linspace(-1,1,200)
+    dS1_axis = np.linspace(-0.002,0.003,200)
+    dS2_axis = np.linspace(0.22,0.228,200)
+    dSt_axis = np.linspace(0.22,0.228,200)
 
     for i in trange(N_f):
         f = f_fin+(f_fin-f_init)*i/N_f
@@ -535,18 +538,29 @@ def density_scan(N, f_init, f_fin, N_f,group_name):
         R1.u = a*l*R1.alpha/2
         R1.F = f*R1.u/R1.mu
         
-        state = os.getcwd()+'/data/density/210616/'+str(group_name)+'/'+str(name)+'.npz'
-        os.makedirs(os.getcwd()+'/data/density/210616/'+str(group_name),exist_ok=True)
+        state = os.getcwd()+'/data/density/210624/'+str(group_name)+'/'+str(name)+'.npz'
+        os.makedirs(os.getcwd()+'/data/density/210624/'+str(group_name),exist_ok=True)
 
         for i in trange(200000):
             R1.time_evolve()
-        n,bins,patches = plt.hist(R1.v.flatten()/R1.u, bins = binning, density = True)
+        n_dS1,x_dS1,y_dS1,_ = plt.hist2d(R1.v/R1.u,R1.dS1, bins = [vu_axis,dS1_axis])
+        n_dS2,x_dS2,y_dS2,_ = plt.hist2d(R1.v/R1.u,R1.dS2, bins = [vu_axis,dS2_axis])
+        n_dSt,x_dSt,y_dSt,_ = plt.hist2d(R1.v/R1.u,R1.dS1+R1.dS2, bins = [vu_axis,dSt_axis])
+
         for i in trange(49999):
             R1.time_evolve()
-            n_temp,__,_ = plt.hist(R1.v.flatten()/R1.u, bins = binning, density = True)
+            n_dS1_temp,__,_,___ = plt.hist2d(R1.v/R1.u,R1.dS1, bins = [vu_axis,dS1_axis])
+            n_dS2_temp,__,_,___ = plt.hist2d(R1.v/R1.u,R1.dS2, bins = [vu_axis,dS2_axis])
+            n_dSt_temp,__,_,___ = plt.hist2d(R1.v/R1.u,R1.dS1+R1.dS2, bins = [vu_axis,dSt_axis])
+
             plt.clf()
-            n+=n_temp
-        n/=50000  
+            n_dS1+=n_dS1_temp
+            n_dS2+=n_dS2_temp
+            n_dSt+=n_dSt_temp
+
+        n_dS1/=50000
+        n_dS2/=50000
+        n_dSt/=50000
         
         save_dict={}
         save_dict['N'] = N
@@ -555,8 +569,13 @@ def density_scan(N, f_init, f_fin, N_f,group_name):
         save_dict['L'] = L
         save_dict['l'] = l
         save_dict['Fs'] = Fs
-        save_dict['n'] = n
-        save_dict['bins'] = bins
+        save_dict['n_dS1'] = n_dS1
+        save_dict['n_dS2'] = n_dS2
+        save_dict['n_dSt'] = n_dSt
+
+        save_dict['y_dS1'] = y_dS1
+        save_dict['y_dS2'] = y_dS2
+        save_dict['y_dSt'] = y_dSt
         
         np.savez(state, **save_dict)
         
