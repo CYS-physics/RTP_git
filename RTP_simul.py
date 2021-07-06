@@ -36,6 +36,8 @@ class RTP_lab:     # OOP
         # initializing configuration of state
         self.set_zero()
         
+        self.compute = False
+        
         print('RTP model initialized')
             
             
@@ -124,7 +126,7 @@ class RTP_lab:     # OOP
         self.s = np.random.choice([1,-1],np.array([self.N_ptcl,self.N_X]))             # random direction at initial time
         self.x = np.random.uniform(-self.L/2, self.L/2, size=np.array([self.N_ptcl,self.N_X]))     # starting with uniformly distributed particles
         self.X = np.zeros(self.N_X)
-        self.v = np.zeros(self.N_X)
+#         self.v = np.zeros(self.N_X)
     
     def tumble(self):             # random part of s dynamics
         tumble = np.random.choice([1,-1], size=np.array([self.N_ptcl,self.N_X]), p = [1-self.delta_time*self.alpha/2, self.delta_time*self.alpha/2]) # +1 no tumble, -1 tumble
@@ -149,8 +151,9 @@ class RTP_lab:     # OOP
         (v, dx, ds) = self.dynamics(self.x, self.s)
         
         self.v = v
-        self.dS1 = -np.average(self.partial_V(self.x+dx/2-v*self.delta_time/2)*(dx-v*self.delta_time),axis=0)
-        self.dS2 = (self.u/self.mu)*np.average(self.s*dx,axis=0)
+        if self.compute:
+            self.dS1 = -np.average(self.partial_V(self.x+dx/2-v*self.delta_time/2)*(dx-v*self.delta_time),axis=0)
+            self.dS2 = (self.u/self.mu)*np.average(self.s*dx,axis=0)
         
           
         self.x += dx                     # active particles movement
@@ -188,11 +191,112 @@ class RTP_lab:     # OOP
             data = pd.DataFrame({'a':a, 'muFu':muFu, 'vu' : VU,'muw':self.muw, 'current':self.current})
             
             return data
+
+        
+    def compute_EP_v(self, n_batch = 200, a=1.1, muFu = 1,duration = 100, wait=100, name = 'test'):
+        self.model=2
+        
+        # change coeff
+        self.N_X = n_batch
+        self.l = self.l/a
+        self.u = a*self.l*self.alpha/2
+        self.F = muFu*self.u/self.mu
+        
+           
+        self.set_zero()
+        
+        self.v = np.linspace(0,self.u*1,n_batch)
+        
+            
+        for __ in trange(int(self.N_time*wait)):   # to stable distribution
+            self.time_evolve()
+        self.compute=True
+        
+        F_v = np.zeros(n_batch)
+        dS1_v = np.zeros(n_batch)
+        dS2_v = np.zeros(n_batch)
+            
+        #error_measure = np.empty(repeat)
+        
+            # computation part with time evolving
+        for _ in trange(self.N_time*duration):
+            self.time_evolve()
+            F_v += (self.L/self.N_ptcl) *np.sum(self.partial_V(self.x),axis=0)/(self.N_time*duration)              # summing the V' at each x
+            dS1_v += self.dS1/(self.N_time*duration)
+            dS2_v += self.dS2/(self.N_time*duration)
+            
+        plt.plot(self.v/self.u,F_v)
+        plt.xlabel('v/u')
+        plt.ylabel('Force_wall')
+        plt.show()
+        plt.plot(self.v/self.u,dS1_v)
+        plt.xlabel('v/u')
+        plt.ylabel('dS1')
+        plt.show()
+        plt.plot(self.v/self.u,dS2_v)
+        plt.xlabel('v/u')
+        plt.ylabel('dS2')
+        plt.show()
+        plt.plot(self.v/self.u,dS1_v+dS2_v,'r')
+        plt.xlabel('v/u')
+        plt.ylabel('dSt')
+        plt.show()
+        
+        return ((self.v/self.u,F_v,dS1_v,dS2_v))
+    
+    def compute_EP_f(self, n_batch = 200,vu = 0, a=1.1,duration = 100, wait=100, name = 'test'):
+        self.model=2
+        
+        # change coeff
+        self.N_X = 1
+        self.l = self.l/a
+        self.u = a*self.l*self.alpha/2
+        self.v = vu*self.u
+        self.set_zero()
+        f_axis = np.zeros(n_batch)
+        dS1_f = np.zeros(n_batch)
+        dS2_f = np.zeros(n_batch)
+        
+        for i in trange(n_batch):
+            self.set_zero()
+            self.F = (i/n_batch)*self.u/self.mu
+            f_axis[i] = i/n_batch
+
         
         
+            
+            for __ in range(int(self.N_time*wait)):   # to stable distribution
+                self.time_evolve()
+            self.compute=True
+
+            
+
+            #error_measure = np.empty(repeat)
+
+                # computation part with time evolving
+            for _ in range(self.N_time*duration):
+                self.time_evolve()
+
+                dS1_f[i] += self.dS1/(self.N_time*duration)
+                dS2_f[i] += self.dS2/(self.N_time*duration)
+
+       
+        plt.plot(f_axis,dS1_f)
+        plt.xlabel('f')
+        plt.ylabel('dS1')
+        plt.show()
+        plt.plot(f_axis,dS2_f)
+        plt.xlabel('f')
+        plt.ylabel('dS2')
+        plt.show()
+        plt.plot(f_axis,dS1_f+dS2_f)
+        plt.xlabel('f')
+        plt.ylabel('dSt')
+        plt.show()             
         
-    # animation simulation 
-    #def 
+        return((f_axis, dS1_f, dS2_f))
+
+
         
         
         
@@ -385,10 +489,10 @@ def measure(ptcl, number_X,L, f_init,f_fin,f_step, t_step):
        
     
 def simulate(N, L, l, a, f,duration,Fs, name):
-    state = os.getcwd()+'/data/dS/210622/'+str(name)+'.npz'
-    os.makedirs(os.getcwd()+'/data/dS/210622/'+str(N),exist_ok=True)
+#     state = os.getcwd()+'/data/dS/210622/'+str(name)+'.npz'
+#     os.makedirs(os.getcwd()+'/data/dS/210622/'+str(N),exist_ok=True)
     
-    RTP = RTP_lab(alpha=1, u=10, len_time=1000, N_time=Fs,N_X=10, N_ptcl=N, v=0, mu=1, muw = 1)
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=10, N_ptcl=N, v=0, mu=1, muw = 1)
     RTP.l = l
     RTP.L = L
     RTP.u = a*l*RTP.alpha/2
@@ -416,24 +520,43 @@ def simulate(N, L, l, a, f,duration,Fs, name):
         dS1_list[i] = RTP.dS1
         dS2_list[i] = RTP.dS2
 
+    v = np.array(v_list).flatten()
+    dS1 = np.array(dS1_list).flatten()
+    dS2 = np.array(dS2_list).flatten()
+    dSt = dS1+dS2
+    
+    vu_axis = np.linspace(-1,1,200)
+    dS1_axis = np.linspace(-0.002,0.003,200)
+    dS2_axis = np.linspace(0.205,0.228,200)
+    dSt_axis = np.linspace(0.205,0.228,200)
+    
+    fig = plt.figure(figsize=(15,5))
+    fig.suptitle('N : '+str(N)+', f : '+str(f),fontsize='20')
+    ax1 = fig.add_subplot(131,title='dS1')
+    plt.hist2d(v/RTP.u,dS1,bins = [vu_axis,dS1_axis])
+    ax2 = fig.add_subplot(132,title='dS2')
+    plt.hist2d(v/RTP.u,dS2,bins = [vu_axis,dS2_axis])
+    ax3 = fig.add_subplot(133,title='dSt')
+    plt.hist2d(v/RTP.u,dSt,bins =  [vu_axis,dSt_axis])
+    os.makedirs('data/fig/dS/20210628/'+str(N),exist_ok=True)
+    plt.savefig('data/fig/dS/20210628/'+str(N)+'/'+str(f)+'.png',dpi=300)
         
-        
-    save_dict={}
-    save_dict['X'] = X_list
-    save_dict['v'] = v_list
-    save_dict['dS1'] = dS1_list
-    save_dict['dS2'] = dS2_list
+#     save_dict={}
+#     save_dict['X'] = X_list
+#     save_dict['v'] = v_list
+#     save_dict['dS1'] = dS1_list
+#     save_dict['dS2'] = dS2_list
 
-    save_dict['u'] = RTP.u
+#     save_dict['u'] = RTP.u
 
-    save_dict['muw'] = RTP.muw
-#     save_dict['current'] = pd.concat(current_list)
-    save_dict['Fs'] = RTP.N_time
-    save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + 'a :'+str(a)
+#     save_dict['muw'] = RTP.muw
+# #     save_dict['current'] = pd.concat(current_list)
+#     save_dict['Fs'] = RTP.N_time
+#     save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + 'a :'+str(a)
 
     
     
-    np.savez(state, **save_dict)
+#     np.savez(state, **save_dict)
     
 def N_scan(fin,ffin,N,N_ptcl):
     direc ='1218/'
@@ -572,6 +695,8 @@ def density_scan(N, f_init, f_fin, N_f,group_name):
         save_dict['n_dS1'] = n_dS1
         save_dict['n_dS2'] = n_dS2
         save_dict['n_dSt'] = n_dSt
+        
+        save_dict['vu_axis'] = vu_axis
 
         save_dict['y_dS1'] = y_dS1
         save_dict['y_dS2'] = y_dS2
@@ -594,3 +719,104 @@ def dS_scan(fin,ffin,N,a,N_ptcl):
         l=30/a
         Fs=1000
         moments(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 300000,Fs, name)
+        
+def EP_scan(N_ptcl,vu_fix,name):
+    direc =os.getcwd()+'/data/EP_scan/210701/'
+    os.makedirs(direc,exist_ok=True)
+    Fs=1000
+    R1=RTP_lab(N_time=Fs,N_ptcl=N_ptcl, model=2)
+    
+    (f_axis,dS1, dS2) = R1.compute_EP_f(n_batch=40,vu=vu_fix,wait=100,duration=30)
+    # 40, 100, 30
+
+    
+    
+    state = direc+str(name)+'.npz'
+    save_dict={}
+    save_dict['N_ptcl'] = N_ptcl
+    save_dict['vu_fix'] = R1.v/R1.u
+    save_dict['f_axis'] = f_axis
+    save_dict['dS1'] = dS1
+    save_dict['dS2'] = dS2
+
+    
+    np.savez(state, **save_dict)
+    
+    
+def EP_v_scan(N_ptcl,f_init, f_fin,N_f):
+    direc =os.getcwd()+'/data/EP_V_scan/210706/'+str(N_ptcl)+'/'
+    os.makedirs(direc,exist_ok=True)
+    Fs=1000
+    
+    for i in trange(N_f):
+        f_fix = f_init+(f_fin-f_init)*i/N_f
+        name = f_fix
+        R1 = RTP_lab(N_time=Fs,N_ptcl=N_ptcl, model=2)
+
+        (vu_axis, F_v,dS1_v,dS2_v)= R1.compute_EP_v(n_batch = 50, wait=100, duration=30, muFu=f_fix)
+        # 40, 100, 30
+
+
+
+        state = direc+str(name)+'.npz'
+        save_dict={}
+        save_dict['N_ptcl'] = N_ptcl
+        save_dict['f'] = f_fix
+        save_dict['vu_axis'] = vu_axis
+        save_dict['F_v'] = F_v
+        save_dict['dS1_v'] = dS1_v
+        save_dict['dS2_v'] = dS2_v
+
+
+        np.savez(state, **save_dict)
+    
+    
+    
+def f_density(N_ptcl, f_init, f_fin, N,name):
+    direc =os.getcwd()+'/data/f_density/210701/'
+    state = direc+str(name)
+    os.makedirs(direc,exist_ok=True)  
+    Fs=1000
+    a=1.1
+    l=30/a
+    rho=1
+    L=300
+    muw = 1*rho*L/N_ptcl
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=40, N_ptcl=N_ptcl, v=0, mu=1, muw = muw)
+    RTP.l = l
+    RTP.L = L
+    RTP.u = a*l*RTP.alpha/2
+        
+        
+    list_v_density = []
+    list_dS_density =[]
+    
+    for i in trange(N):
+        v_list = []
+        dSt_list = []
+        f = f_init+i*(f_fin-f_init)/N
+        
+        
+        RTP.F = f*RTP.u/RTP.mu
+        RTP.set_zero()
+        
+        for _ in trange(100000):
+            RTP.time_evolve()
+        RTP.compute=True
+        for _ in range(1000):
+            RTP.time_evolve()
+            v_list.append(RTP.v)
+            dSt_list.append(RTP.dS1+RTP.dS2)
+        
+        
+        
+        v_density = pd.DataFrame({'f':f,'v_list':v_list})
+        list_v_density.append(v_density)
+        dS_density = pd.DataFrame({'f':f,'dSt_list':dSt_list})
+        list_dS_density.append(dS_density)
+                              
+    v_densities = pd.concat(list_v_density)
+    dS_densities = pd.concat(list_dS_density)
+    
+    v_densities.to_pickle(state+'_v.pkl')
+    dS_densities.to_pickle(state+'_dS.pkl')

@@ -304,8 +304,8 @@ def measure(ptcl, number_X,L, f_init,f_fin,f_step, t_step):
        
     
 def simulate(N, L, l, a, f,duration,Fs, name):
-    state = os.getcwd()+'/data/dS/210622/'+str(name)+'.npz'
-    os.makedirs(os.getcwd()+'/data/dS/210622',exist_ok=True)
+#     state = os.getcwd()+'/data/dS/210622/'+str(name)+'.npz'
+#     os.makedirs(os.getcwd()+'/data/dS/210622',exist_ok=True)
     
     RTP = RTP_lab(alpha=0.5, u=10, len_time=100, N_time=Fs,N_X=10, N_ptcl=N, v=0, mu=1)
     RTP.l = l
@@ -337,23 +337,43 @@ def simulate(N, L, l, a, f,duration,Fs, name):
         dS2_list[i] = RTP.dS2.to(device=cpu).numpy()
 
         
+    v = np.array(v_list).flatten()
+    dS1 = np.array(dS1_list).flatten()
+    dS2 = np.array(dS2_list).flatten()
+    dSt = dS1+dS2
+    
+    vu_axis = np.linspace(-1,1,200)
+    dS1_axis = np.linspace(-0.002,0.003,200)
+    dS2_axis = np.linspace(0.22,0.228,200)
+    dSt_axis = np.linspace(0.22,0.228,200)
+    
+    fig = plt.figure(figsize=(15,5))
+    fig.suptitle('N : '+str(N)+', f : '+str(f),fontsize='20')
+    ax1 = fig.add_subplot(131,title='dS1')
+    plt.hist2d(v/RTP.u,dS1,bins = [vu_axis,dS1_axis])
+    ax2 = fig.add_subplot(132,title='dS2')
+    plt.hist2d(v/RTP.u,dS2,bins = [vu_axis,dS2_axis])
+    ax3 = fig.add_subplot(133,title='dSt')
+    plt.hist2d(v/RTP.u,dSt,bins =  [vu_axis,dSt_axis])
+    os.makedirs('data/fig/dS/20210626/'+str(N),exist_ok=True)
+    plt.savefig('data/fig/dS/20210626/'+str(N)+'/'+str(f)+'.png',dpi=300)
         
-    save_dict={}
-    save_dict['X'] = X_list
-    save_dict['v'] = v_list
-    save_dict['dS1'] = dS1_list
-    save_dict['dS2'] = dS2_list
+#     save_dict={}
+#     save_dict['X'] = X_list
+#     save_dict['v'] = v_list
+#     save_dict['dS1'] = dS1_list
+#     save_dict['dS2'] = dS2_list
 
-    save_dict['u'] = RTP.u
+#     save_dict['u'] = RTP.u
 
-    save_dict['muw'] = RTP.muw
-    save_dict['Fs'] = RTP.N_time
-    save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + 'a :'+str(a)
+#     save_dict['muw'] = RTP.muw
+#     save_dict['Fs'] = RTP.N_time
+#     save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + 'a :'+str(a)
     
 
     
     
-    np.savez(state, **save_dict)
+#     np.savez(state, **save_dict)
     
 
 
