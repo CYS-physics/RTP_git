@@ -151,9 +151,9 @@ class RTP_lab:     # OOP
         (v, dx, ds) = self.dynamics(self.x, self.s)
         
         self.v = v
-        if self.compute:
-            self.dS1 = -np.average(self.partial_V(self.x+dx/2-v*self.delta_time/2)*(dx-v*self.delta_time),axis=0)
-            self.dS2 = (self.u/self.mu)*np.average(self.s*dx,axis=0)
+#         if self.compute:
+#             self.dS1 = -np.average(self.partial_V(self.x+dx/2-v*self.delta_time/2)*(dx-v*self.delta_time),axis=0)
+#             self.dS2 = (self.u/self.mu)*np.average(self.s*dx,axis=0)
         
           
         self.x += dx                     # active particles movement
@@ -588,7 +588,7 @@ def rho_scan(fin,ffin,N,rho):
         simulate(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 1000000,Fs, name)
         
 def L_scan(fin,ffin,N,L):
-    direc ='1211/'
+    direc ='211007/'
     N_ptcl=30*L
     rho=10
     direc+='L/'+str(L)+'/'
@@ -623,12 +623,14 @@ def simul_scan(f_init, f_fin, N, N_ptcl):
         simulate(N_ptcl,300,30,1,f,1000000,1000,str(N_ptcl)+'/'+str(f))
         
         
-def l_scan_moments(fin,ffin,N,a,N_ptcl):
+def L_scan_moments(fin,ffin,N,L):
     
-    direc ='210601/'
+    direc ='211007/'
     rho=1
-    L=300
-    direc+='a/'+str(a)+'/N/'+str(N_ptcl)+'/'
+    L=L
+    N_ptcl = 30*L
+    a=0.9
+    direc+='a/'+str(a)+'/L/'+str(L)+'/'
     os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
     
     for i in trange(N):
@@ -820,3 +822,95 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
     
     v_densities.to_pickle(state+'_v.pkl')
     dS_densities.to_pickle(state+'_dS.pkl')
+    
+
+    
+def autocorr(x):
+    (a,b) = x.shape
+    corr = np.zeros(b)
+    
+    for i in trange(a):
+        result = np.correlate(x[i],x[i],mode='full')
+        z = result[result.size//2:]
+        z = z/float(z.max())
+        corr+=z/a
+    
+    return corr
+    
+    
+def anomalous(f,duration, N_ptcl):
+    plt.clf()
+#     a=0.7   #fc = 0.65
+    a=0.9 # fc = 0.77
+    Fs=2000
+    
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=100, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
+    RTP.compute = False
+    RTP.l = 30
+    RTP.L = 300
+    RTP.u = a*RTP.l*RTP.alpha/2
+    RTP.F = f*RTP.u/RTP.mu
+    RTP.set_zero()
+    
+    v_traj = np.empty((RTP.N_X,duration))
+    time = (np.arange(duration)+1)*RTP.delta_time
+    
+    for _ in trange(2000):
+        RTP.time_evolve()
+    for i in trange(duration):
+        RTP.time_evolve()
+        v_traj[:,i] = RTP.v/RTP.u
+    
+    
+    
+    # autocorr
+    
+    plt.subplot(1,2,1)
+
+
+    autov = autocorr(v_traj)
+    try:
+        m, c = np.polyfit(np.log(time[:int(duration/10)]), np.log(autov[:int(duration/10)]), 1) # fit log(y) = m*log(x) + c
+        y_fit = np.exp(m*np.log(time) + c) # calculate the fitted values of y
+        plt.plot(time, y_fit, ':',label='slope : ' + str(m))
+        # your code that will (maybe) throw
+    except np.linalg.LinAlgError as e:
+        pass
+    plt.plot(time, autov, color = 'r')
+
+
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.ylim(0.01,2)
+    plt.xlabel('t')
+    plt.ylabel('corr')
+    plt.grid()
+    plt.legend()
+    plt.title('f :'+str(f))
+
+
+
+    
+    
+    # diffusion
+    plt.subplot(1,2,2)
+    diff = np.average(np.cumsum(v_traj,axis=1)**2,axis=0)
+    
+    try:
+        m, c = np.polyfit(np.log(time[:int(duration/10)]), np.log(diff[:int(duration/10)]), 1) # fit log(y) = m*log(x) + c
+        y_fit = np.exp(m*np.log(time) + c) # calculate the 
+        plt.plot(time, y_fit, ':',label='slope : ' + str(m))
+
+        # your code that will (maybe) throw
+    except np.linalg.LinAlgError as e:
+        pass
+    plt.plot(time, diff, color = 'r')
+    
+    plt.xlabel('t')
+    plt.ylabel('<x^2>')
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.grid()
+    plt.legend()
+    plt.title('f :'+str(f))
+    plt.savefig('image/f='+str(f)+'.png')
