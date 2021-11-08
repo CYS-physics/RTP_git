@@ -625,10 +625,10 @@ def simul_scan(f_init, f_fin, N, N_ptcl):
         
 def L_scan_moments(fin,ffin,N,L):
     
-    direc ='211020/'
-    rho=50
+    direc ='211108/'
+    rho=10
     L=L
-    N_ptcl = 200*L
+    N_ptcl = 50*L
     a=0.9
     direc+='a/'+str(a)+'/L/'+str(L)+'/'
     os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
@@ -825,17 +825,18 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
     
 
     
-def autocorr(x):
-    (a,b) = x.shape
-    corr = np.zeros(b)
+# def autocorr(x):
+#     (a,b) = x.shape
+#     corr = np.zeros((a,b))
     
-    for i in trange(a):
-        result = np.correlate(x[i],x[i],mode='full')
-        z = result[result.size//2:]
-        z = z/float(z.max())
-        corr+=z/a
+#     z_max = 0
+#     for i in trange(a):
+#         result = np.correlate(x[i],x[i],mode='full')
+#         z = result[result.size//2:]
+#         z_max = np.max(z_max,float(z.max()))
+#         corr[i]=z
     
-    return corr
+#     return corr/z_max
     
     
 def anomalous(f,duration, N_ptcl):
@@ -844,12 +845,14 @@ def anomalous(f,duration, N_ptcl):
     a=0.9 # fc = 0.77
     Fs=2000
     
-    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=100, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=5, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
     RTP.compute = False
     RTP.l = 30
     RTP.L = 300
     RTP.u = a*RTP.l*RTP.alpha/2
     RTP.F = f*RTP.u/RTP.mu
+    rho = 1
+    RTP.muw = 1*rho*RTP.L/RTP.N_ptcl
     RTP.set_zero()
     
     v_traj = np.empty((RTP.N_X,duration))
@@ -865,18 +868,24 @@ def anomalous(f,duration, N_ptcl):
     
     # autocorr
     
-    plt.subplot(1,2,1)
 
+    autov = np.zeros(v_traj.shape)
+    
+    for i in range(duration-1):
+        autov[:,i] = np.average(v_traj[:,i+1:]*v_traj[:,:-i-1],axis=1)/np.average(v_traj**2,axis=1)
+        
+#     try:
+#         m, c = np.polyfit(np.log(time[:int(duration/10)]), np.log(autov[:int(duration/10)]), 1) # fit log(y) = m*log(x) + c
+#         y_fit = np.exp(m*np.log(time) + c) # calculate the fitted values of y
+#         plt.plot(time, y_fit, ':',label='slope : ' + str(m))
+#         # your code that will (maybe) throw
+#     except np.linalg.LinAlgError as e:
+#         pass
 
-    autov = autocorr(v_traj)
-    try:
-        m, c = np.polyfit(np.log(time[:int(duration/10)]), np.log(autov[:int(duration/10)]), 1) # fit log(y) = m*log(x) + c
-        y_fit = np.exp(m*np.log(time) + c) # calculate the fitted values of y
-        plt.plot(time, y_fit, ':',label='slope : ' + str(m))
-        # your code that will (maybe) throw
-    except np.linalg.LinAlgError as e:
-        pass
-    plt.plot(time, autov, color = 'r')
+    plt.subplot(1,3,1)
+    
+    for i in range(len(autov)):
+        plt.scatter(time, autov[i],s=1)
 
 
     plt.yscale('log')
@@ -885,32 +894,54 @@ def anomalous(f,duration, N_ptcl):
     plt.xlabel('t')
     plt.ylabel('corr')
     plt.grid()
-    plt.legend()
+#     plt.legend()
     plt.title('f :'+str(f))
 
 
+    plt.subplot(1,3,2)
+    
+    for i in range(len(autov)):
+        plt.scatter(time, autov[i],s=1)
 
+
+    plt.yscale('log')
+#     plt.xscale('log')
+    plt.ylim(0.01,2)
+    plt.xlim(0,1)
+    plt.xlabel('t')
+    plt.ylabel('corr')
+    plt.grid()
+#     plt.legend()
+    plt.title('f :'+str(f))
     
     
     # diffusion
-    plt.subplot(1,2,2)
-    diff = np.average(np.cumsum(v_traj,axis=1)**2,axis=0)
+    plt.subplot(1,3,3)
+    disp = np.cumsum(v_traj,axis=1)
+    msd = np.zeros(v_traj.shape)
     
-    try:
-        m, c = np.polyfit(np.log(time[:int(duration/10)]), np.log(diff[:int(duration/10)]), 1) # fit log(y) = m*log(x) + c
-        y_fit = np.exp(m*np.log(time) + c) # calculate the 
-        plt.plot(time, y_fit, ':',label='slope : ' + str(m))
+    for i in range(duration-1):
+        msd[:,i] = np.average((disp[:,i+1:]-disp[:,:-i-1])**2,axis=1)
+        
+        
+#     diff = np.average(np.cumsum(v_traj,axis=1)**2,axis=0)
+    
+#     try:
+#         m, c = np.polyfit(np.log(time[:int(duration/10)]), np.log(diff[:int(duration/10)]), 1) # fit log(y) = m*log(x) + c
+#         y_fit = np.exp(m*np.log(time) + c) # calculate the 
+#         plt.plot(time, y_fit, ':',label='slope : ' + str(m))
 
-        # your code that will (maybe) throw
-    except np.linalg.LinAlgError as e:
-        pass
-    plt.plot(time, diff, color = 'r')
+#         # your code that will (maybe) throw
+#     except np.linalg.LinAlgError as e:
+#         pass
+    for i in range(len(v_traj)):
+        plt.plot(time[:-1], msd[i,:-1])
     
     plt.xlabel('t')
     plt.ylabel('<x^2>')
     plt.yscale('log')
     plt.xscale('log')
     plt.grid()
-    plt.legend()
+#     plt.legend()
     plt.title('f :'+str(f))
     plt.savefig('image/f='+str(f)+'.png')
