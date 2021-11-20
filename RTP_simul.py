@@ -693,7 +693,7 @@ def v_traj_scan(fin,ffin,N_f,L):
     os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
     
     for i in trange(N_f):
-        f = fin+(ffin-fin)*i/N
+        f = fin+(ffin-fin)*i/N_f
         name = direc+ str(f)
         l=30/a
         Fs=2000
