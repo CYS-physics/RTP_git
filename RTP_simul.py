@@ -479,6 +479,48 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     np.savez(state, **save_dict)
     
     
+def trajectory(N, L, l, a, f, muw,duration,Fs, name):
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=40, N_ptcl=N, v=0, mu=1, muw = muw)
+    RTP.l = l
+    RTP.L = L
+    RTP.u = a*l*RTP.alpha/2
+    RTP.F = f*RTP.u/RTP.mu
+    
+    RTP.set_zero()
+        
+    
+    state = os.getcwd()+'/data/'+str(name)+'.npz'
+    
+    save_dict={}
+
+    save_dict['muw'] = RTP.muw
+    save_dict['Fs'] = RTP.N_time
+    save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + ', a :'+str(a)
+    save_dict['count'] = 0
+        
+        
+    RTP.muw = muw
+
+    v_traj = np.zeros((duration,RTP.N_X))
+    
+#     for i in range(int(duration/5)):
+#         RTP.time_evolve()
+    
+    
+#     for i in trange(duration*5):
+#         RTP.time_evolve()
+        
+    for i in trange(duration):
+        RTP.time_evolve()
+        
+        v_traj[i] = RTP.v
+    
+ 
+    save_dict['v_traj'] = v_traj
+#     os.makedirs(os.getcwd()+'/data/'+str(name),exist_ok=True)
+    np.savez(state, **save_dict)
+    
+    
     
 def measure(ptcl, number_X,L, f_init,f_fin,f_step, t_step):
     
@@ -639,6 +681,23 @@ def L_scan_moments(fin,ffin,N,L):
         l=30/a
         Fs=2000
         moments(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 300000,Fs, name)
+        
+def v_traj_scan(fin,ffin,N_f,L):
+    
+    direc ='211120_traj/'
+    rho=20
+    L=L
+    N_ptcl = 100*L
+    a=0.9
+    direc+='a/'+str(a)+'/L/'+str(L)+'/'
+    os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
+    
+    for i in trange(N_f):
+        f = fin+(ffin-fin)*i/N
+        name = direc+ str(f)
+        l=30/a
+        Fs=2000
+        trajectory(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 300000,Fs, name)
         
         
 def density_scan(N, f_init, f_fin, N_f,group_name):
