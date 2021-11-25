@@ -667,10 +667,10 @@ def simul_scan(f_init, f_fin, N, N_ptcl):
         
 def L_scan_moments(fin,ffin,N,L):
     
-    direc ='211110/'
-    rho=20
+    direc ='211125/'
+    rho=1
     L=L
-    N_ptcl = 100*L
+    N_ptcl = 20*L
     a=0.9
     direc+='a/'+str(a)+'/L/'+str(L)+'/'
     os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
@@ -931,7 +931,7 @@ def anomalous(f,duration, N_ptcl):
     autov = np.zeros(v_traj.shape)
     
     for i in range(duration-1):
-        autov[:,i] = np.average(v_traj[:,i+1:]*v_traj[:,:-i-1],axis=1)/np.average(v_traj**2,axis=1)
+        autov[:,i] = np.average((v_traj[:,i+1:]-np.average(v_traj[:,i+1:]))*(v_traj[:,:-i-1]-np.average(v_traj[:,:-i-1])),axis=1)/np.average(v_traj**2,axis=1)
         
 #     try:
 #         m, c = np.polyfit(np.log(time[:int(duration/10)]), np.log(autov[:int(duration/10)]), 1) # fit log(y) = m*log(x) + c
