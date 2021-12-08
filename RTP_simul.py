@@ -6,11 +6,17 @@
 # 200920
 # private
 
+import os
+os.environ["MKL_NUM_THREADS"] = "1" 
+os.environ["NUMEXPR_NUM_THREADS"] = "1" 
+os.environ["OMP_NUM_THREADS"] = "1" 
+
+
 import numpy as np                   # numerical calculation
 import pandas as pd                  # data processing
 from tqdm import trange              # progess bar
 import matplotlib.pyplot as plt      # visualization
-import os                            # file management
+# import os                            # file management
 from matplotlib.animation import FuncAnimation     # animation
 import sys
 
