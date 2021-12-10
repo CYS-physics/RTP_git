@@ -673,7 +673,7 @@ def simul_scan(f_init, f_fin, N, N_ptcl):
         
 def L_scan_moments(fin,ffin,N,L):
     
-    direc ='211209/'
+    direc ='211210/'
 #     rho=10
     rho=15
 
@@ -688,8 +688,8 @@ def L_scan_moments(fin,ffin,N,L):
         f = fin+(ffin-fin)*i/N
         name = direc+ str(f)
         l=30/a
-        Fs=2000
-        moments(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 300000,Fs, name)
+        Fs=3000
+        moments(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 1000000,Fs, name)
         
 def v_traj_scan(fin,ffin,N_f,L):
     
