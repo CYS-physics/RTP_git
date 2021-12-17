@@ -689,7 +689,7 @@ def L_scan_moments(fin,ffin,N,L):
         name = direc+ str(f)
         l=20/a
         Fs=3000
-        moments(N_ptcl, L, l, a, f,0.01*rho*L/N_ptcl, 300000,Fs, name)
+        moments(N_ptcl, L, l, a, f,rho*L/N_ptcl, 300000,Fs, name)
         
 def v_traj_scan(fin,ffin,N_f,L):
     
