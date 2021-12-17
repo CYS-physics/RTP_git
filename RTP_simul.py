@@ -687,7 +687,7 @@ def L_scan_moments(fin,ffin,N,L):
     for i in trange(N):
         f = fin+(ffin-fin)*i/N
         name = direc+ str(f)
-        l=2*self.u/(self.alpha* a)
+        l=20/a
         Fs=3000
         moments(N_ptcl, L, l, a, f,0.01*rho*L/N_ptcl, 300000,Fs, name)
         
