@@ -456,7 +456,7 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
 #     for i in trange(duration*5):
 #         RTP.time_evolve()
         
-    for i in trange(duration):
+    for i in range(duration):
         RTP.time_evolve()
         
         first[i] = np.average(np.abs(RTP.v))
@@ -684,7 +684,7 @@ def L_scan_moments(fin,ffin,N,L):
     direc+='a/'+str(a)+'/L/'+str(L)+'/'
     os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
     
-    for i in trange(N):
+    for i in range(N):
         f = fin+(ffin-fin)*i/N
         name = direc+ str(f)
         l=20/a
