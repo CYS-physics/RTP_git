@@ -926,9 +926,9 @@ def anomalous(f,duration, N_ptcl):
     v_traj = np.empty((RTP.N_X,duration))
     time = (np.arange(duration)+1)*RTP.delta_time
     
-    for _ in trange(2000):
+    for _ in range(2000):
         RTP.time_evolve()
-    for i in trange(duration):
+    for i in range(duration):
         RTP.time_evolve()
         v_traj[:,i] = RTP.v/RTP.u
     
@@ -939,8 +939,12 @@ def anomalous(f,duration, N_ptcl):
 
     autov = np.zeros(v_traj.shape)
     
-    for i in range(duration-1):
-        autov[:,i] = np.average((v_traj[:,i+1:]-np.average(v_traj[:,i+1:]))*(v_traj[:,:-i-1]-np.average(v_traj[:,:-i-1])),axis=1)/np.average(v_traj**2,axis=1)
+    for i in range(int(np.log2(duration-1))):
+        j_list = [1,2,3,5,7,9,11,13,17,19,21]
+        for j in j_list:
+            x = j*2**i
+            if x<duration:
+                autov[:,x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:],axis=1).reshape(-1,1))*(v_traj[:,:-x]-np.average(v_traj[:,:-x],axis=1).reshape(-1,1)),axis=1)/np.average((v_traj-np.average(v_traj,axis=1).reshape(-1,1))**2,axis=1)
         
 #     try:
 #         m, c = np.polyfit(np.log(time[:int(duration/10)]), np.log(autov[:int(duration/10)]), 1) # fit log(y) = m*log(x) + c
@@ -988,9 +992,12 @@ def anomalous(f,duration, N_ptcl):
     disp = np.cumsum(v_traj,axis=1)
     msd = np.zeros(v_traj.shape)
     
-    for i in range(duration-1):
-        msd[:,i] = np.average((disp[:,i+1:]-disp[:,:-i-1])**2,axis=1)
-        
+    for i in range(int(np.log2(duration-1))):
+        j_list = [1,2,3,5,7,11,13,15,17,19,21]
+        for j in j_list:
+            x = j*2**i
+            if x<duration:
+                msd[:,x] = np.average((disp[:,x:]-disp[:,:-x])**2,axis=1)
         
 #     diff = np.average(np.cumsum(v_traj,axis=1)**2,axis=0)
     
@@ -1003,7 +1010,7 @@ def anomalous(f,duration, N_ptcl):
 #     except np.linalg.LinAlgError as e:
 #         pass
     for i in range(len(v_traj)):
-        plt.plot(time[:-1], msd[i,:-1])
+        plt.scatter(time[:-1][msd[i,:-1]>0], msd[i,:-1][msd[i,:-1]>0],s=1)
     
     plt.xlabel('t')
     plt.ylabel('<x^2>')
@@ -1013,3 +1020,8 @@ def anomalous(f,duration, N_ptcl):
 #     plt.legend()
     plt.title('f :'+str(f))
     plt.savefig('image/f='+str(f)+'.png')
+    plt.show()
+    
+    
+#     plt.hist(v_traj,bins=50)
+#     plt.show()
