@@ -908,6 +908,11 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
     
     
 def anomalous(f,duration, N_ptcl):
+    date = '220120/'
+    os.makedirs('image/anomalous/'+date,exist_ok=True)  
+    os.makedirs('image/v_hist/'+date,exist_ok=True)  
+
+
     plt.clf()
 #     a=0.7   #fc = 0.65
     a=0.9 # fc = 0.77
@@ -1019,9 +1024,12 @@ def anomalous(f,duration, N_ptcl):
     plt.grid()
 #     plt.legend()
     plt.title('f :'+str(f))
-    plt.savefig('image/f='+str(f)+'.png')
-    plt.show()
+    plt.savefig('image/anomalous/'+date+'f='+str(f)+'.png')
+#     plt.show()
     
     
-#     plt.hist(v_traj,bins=50)
+    plt.hist(v_traj,bins=50)
+
+
+    plt.savefig('image/v_hist/'+date+'f='+str(f)+'.png')
 #     plt.show()
