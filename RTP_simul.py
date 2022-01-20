@@ -916,7 +916,7 @@ def anomalous(f,duration, N_ptcl):
     plt.clf()
 #     a=0.7   #fc = 0.65
     a=0.9 # fc = 0.77
-    Fs=2000
+    Fs=200
     
     RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=5, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
     RTP.compute = False
@@ -984,7 +984,7 @@ def anomalous(f,duration, N_ptcl):
     plt.yscale('log')
 #     plt.xscale('log')
     plt.ylim(0.01,2)
-    plt.xlim(0,1)
+#     plt.xlim(0,1)
     plt.xlabel('t')
     plt.ylabel('corr')
     plt.grid()
@@ -1027,8 +1027,8 @@ def anomalous(f,duration, N_ptcl):
     plt.savefig('image/anomalous/'+date+'f='+str(f)+'.png')
 #     plt.show()
     
-    
-    plt.hist(v_traj,bins=50)
+    binning = np.linspace(-1.5,1.5,50)
+    plt.hist(v_traj.reshape(-1),bins=binning)
 
 
     plt.savefig('image/v_hist/'+date+'f='+str(f)+'.png')
