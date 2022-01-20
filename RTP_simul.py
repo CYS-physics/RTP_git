@@ -1029,6 +1029,7 @@ def anomalous(f,duration, N_ptcl):
     
     binning = np.linspace(-1.5,1.5,50)
     plt.hist(v_traj.reshape(-1),bins=binning)
+    plt.yscale('log')
 
 
     plt.savefig('image/v_hist/'+date+'f='+str(f)+'.png')
