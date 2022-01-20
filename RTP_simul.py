@@ -916,7 +916,7 @@ def anomalous(f,duration, N_ptcl):
     plt.clf()
 #     a=0.7   #fc = 0.65
     a=0.9 # fc = 0.77
-    Fs=200
+    Fs=1000
     
     RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=5, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
     RTP.compute = False
