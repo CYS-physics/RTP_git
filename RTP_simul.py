@@ -907,7 +907,7 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
 #     return corr/z_max
     
     
-def anomalous(f,duration, N_ptcl):
+def anomalous(f,duration, N_ptcl,progress = False):
     date = '220120/'
     os.makedirs('image/anomalous/'+date,exist_ok=True)  
     os.makedirs('image/v_hist/'+date,exist_ok=True)  
@@ -916,7 +916,7 @@ def anomalous(f,duration, N_ptcl):
     plt.clf()
 #     a=0.7   #fc = 0.65
     a=0.9 # fc = 0.77
-    Fs=1000
+    Fs=300
     
     RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=5, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
     RTP.compute = False
@@ -931,11 +931,19 @@ def anomalous(f,duration, N_ptcl):
     v_traj = np.empty((RTP.N_X,duration))
     time = (np.arange(duration)+1)*RTP.delta_time
     
-    for _ in range(20000):
-        RTP.time_evolve()
-    for i in range(duration):
-        RTP.time_evolve()
-        v_traj[:,i] = RTP.v/RTP.u
+    if progress:
+        for _ in trange(20000):
+            RTP.time_evolve()
+        for i in trange(duration):
+            RTP.time_evolve()
+            v_traj[:,i] = RTP.v/RTP.u
+            
+    else:
+        for _ in range(20000):
+            RTP.time_evolve()
+        for i in range(duration):
+            RTP.time_evolve()
+            v_traj[:,i] = RTP.v/RTP.u
     
     
     
@@ -1024,13 +1032,18 @@ def anomalous(f,duration, N_ptcl):
     plt.grid()
 #     plt.legend()
     plt.title('f :'+str(f))
-    plt.savefig('image/anomalous/'+date+'f='+str(f)+'.png')
-#     plt.show()
+    if progress:
+        plt.show()
+    else:
+        plt.savefig('image/anomalous/'+date+'f='+str(f)+'.png')
+#     
     
     binning = np.linspace(-1.5,1.5,100)
     plt.hist(v_traj.reshape(-1),bins=binning)
     plt.yscale('log')
 
-
-    plt.savefig('image/v_hist/'+date+'f='+str(f)+'.png')
-#     plt.show()
+    if progress:
+        plt.show()
+    else:
+        plt.savefig('image/v_hist/'+date+'f='+str(f)+'.png')
+#     
