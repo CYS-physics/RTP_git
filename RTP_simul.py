@@ -926,7 +926,7 @@ def anomalous(f,duration, N_ptcl):
     v_traj = np.empty((RTP.N_X,duration))
     time = (np.arange(duration)+1)*RTP.delta_time
     
-    for _ in range(2000):
+    for _ in range(20000):
         RTP.time_evolve()
     for i in range(duration):
         RTP.time_evolve()
