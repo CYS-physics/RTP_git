@@ -908,7 +908,7 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
     
     
 def anomalous(f,duration, N_ptcl,progress = False):
-    date = '220124/'+str(N_ptcl)+'/'
+    date = '220124_1/'+str(N_ptcl)+'/'
     os.makedirs('image/anomalous/'+date,exist_ok=True)  
     os.makedirs('image/v_hist/'+date,exist_ok=True)  
 
@@ -918,10 +918,10 @@ def anomalous(f,duration, N_ptcl,progress = False):
     a=0.9 # fc = 0.77
     Fs=2000
     
-    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=5, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=10, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
     RTP.compute = False
     RTP.l = 30
-    RTP.L = 300
+    RTP.L = 100
     RTP.u = a*RTP.l*RTP.alpha/2
     RTP.F = f*RTP.u/RTP.mu
     rho = 2
@@ -950,14 +950,16 @@ def anomalous(f,duration, N_ptcl,progress = False):
     # autocorr
     
 
-    autov = np.zeros(v_traj.shape)
+#     autov = np.zeros(v_traj.shape)
+    autov = np.zeros(duration)
     
     for i in range(int(np.log2(duration-1))):
         j_list = [1,2,3,5,7,9,11,13,17,19,21]
         for j in j_list:
             x = j*2**i
             if x<duration:
-                autov[:,x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:],axis=1).reshape(-1,1))*(v_traj[:,:-x]-np.average(v_traj[:,:-x],axis=1).reshape(-1,1)),axis=1)#/np.average((v_traj-np.average(v_traj,axis=1).reshape(-1,1))**2,axis=1)
+#                 autov[:,x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:],axis=1).reshape(-1,1))*(v_traj[:,:-x]-np.average(v_traj[:,:-x],axis=1).reshape(-1,1)),axis=1)/np.average((v_traj-np.average(v_traj,axis=1).reshape(-1,1))**2,axis=1)
+                autov[x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:]))*(v_traj[:,:-x]-np.average(v_traj[:,:-x])))/np.average((v_traj-np.average(v_traj))**2)
         
 #     try:
 #         m, c = np.polyfit(np.log(time[:int(duration/10)]), np.log(autov[:int(duration/10)]), 1) # fit log(y) = m*log(x) + c
@@ -969,8 +971,9 @@ def anomalous(f,duration, N_ptcl,progress = False):
 
     plt.subplot(1,3,1)
     
-    for i in range(len(autov)):
-        plt.scatter(time, autov[i],s=1)
+#     for i in range(len(autov)):
+#         plt.scatter(time, autov[i],s=1)
+    plt.scatter(time,autov,s=1)
 
 
     plt.yscale('log')
@@ -985,8 +988,9 @@ def anomalous(f,duration, N_ptcl,progress = False):
 
     plt.subplot(1,3,2)
     
-    for i in range(len(autov)):
-        plt.scatter(time, autov[i],s=1)
+#     for i in range(len(autov)):
+#         plt.scatter(time, autov[i],s=1)
+    plt.scatter(time,autov,s=1)
 
 
     plt.yscale('log')
