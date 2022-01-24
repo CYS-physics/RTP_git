@@ -449,8 +449,8 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     third=np.zeros(duration)
     fourth=np.zeros(duration)
     
-#     for i in range(int(duration/5)):
-#         RTP.time_evolve()
+    for i in range(int(duration/5)):
+        RTP.time_evolve()
     
     
 #     for i in trange(duration*5):
