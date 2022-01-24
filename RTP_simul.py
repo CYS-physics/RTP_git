@@ -908,7 +908,7 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
     
     
 def anomalous(f,duration, N_ptcl,progress = False):
-    date = '220122/'+str(N_ptcl)+'/'
+    date = '220124/'+str(N_ptcl)+'/'
     os.makedirs('image/anomalous/'+date,exist_ok=True)  
     os.makedirs('image/v_hist/'+date,exist_ok=True)  
 
@@ -924,7 +924,7 @@ def anomalous(f,duration, N_ptcl,progress = False):
     RTP.L = 300
     RTP.u = a*RTP.l*RTP.alpha/2
     RTP.F = f*RTP.u/RTP.mu
-    rho = 4
+    rho = 2
     RTP.muw = 1*rho*RTP.L/RTP.N_ptcl
     RTP.set_zero()
     
