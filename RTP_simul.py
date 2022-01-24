@@ -921,10 +921,10 @@ def anomalous(f,duration, N_ptcl,progress = False):
     RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=10, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
     RTP.compute = False
     RTP.l = 30
-    RTP.L = 100
+    RTP.L = 1000
     RTP.u = a*RTP.l*RTP.alpha/2
     RTP.F = f*RTP.u/RTP.mu
-    rho = 2
+    rho = 0.2
     RTP.muw = 1*rho*RTP.L/RTP.N_ptcl
     RTP.set_zero()
     
@@ -958,8 +958,8 @@ def anomalous(f,duration, N_ptcl,progress = False):
         for j in j_list:
             x = j*2**i
             if x<duration:
-#                 autov[:,x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:],axis=1).reshape(-1,1))*(v_traj[:,:-x]-np.average(v_traj[:,:-x],axis=1).reshape(-1,1)),axis=1)/np.average((v_traj-np.average(v_traj,axis=1).reshape(-1,1))**2,axis=1)
-                autov[x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:]))*(v_traj[:,:-x]-np.average(v_traj[:,:-x])))/np.average((v_traj-np.average(v_traj))**2)
+                autov[:,x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:]))*(v_traj[:,:-x]-np.average(v_traj[:,:-x])),axis=1)/np.average((v_traj-np.average(v_traj))**2)
+#                 autov[x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:]))*(v_traj[:,:-x]-np.average(v_traj[:,:-x])))/np.average((v_traj-np.average(v_traj))**2)
         
 #     try:
 #         m, c = np.polyfit(np.log(time[:int(duration/10)]), np.log(autov[:int(duration/10)]), 1) # fit log(y) = m*log(x) + c
@@ -969,11 +969,11 @@ def anomalous(f,duration, N_ptcl,progress = False):
 #     except np.linalg.LinAlgError as e:
 #         pass
 
-    plt.subplot(1,3,1)
+    plt.subplot(1,2,1)
     
-#     for i in range(len(autov)):
-#         plt.scatter(time, autov[i],s=1)
-    plt.scatter(time,autov,s=1)
+    for i in range(len(autov)):
+        plt.scatter(time, autov[i],s=1)
+#     plt.scatter(time,autov,s=1)
 
 
     plt.yscale('log')
@@ -985,27 +985,8 @@ def anomalous(f,duration, N_ptcl,progress = False):
 #     plt.legend()
     plt.title('f :'+str(f))
 
-
-    plt.subplot(1,3,2)
-    
-#     for i in range(len(autov)):
-#         plt.scatter(time, autov[i],s=1)
-    plt.scatter(time,autov,s=1)
-
-
-    plt.yscale('log')
-#     plt.xscale('log')
-    plt.ylim(0.01,2)
-#     plt.xlim(0,1)
-    plt.xlabel('t')
-    plt.ylabel('corr')
-    plt.grid()
-#     plt.legend()
-    plt.title('f :'+str(f))
-    
-    
     # diffusion
-    plt.subplot(1,3,3)
+    plt.subplot(1,2,2)
     disp = np.cumsum(v_traj,axis=1)
     msd = np.zeros(v_traj.shape)
     
