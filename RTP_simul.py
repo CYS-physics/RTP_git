@@ -657,7 +657,7 @@ def N_scan_moments(fin,ffin,N,N_ptcl):
     direc+='N/'+str(N_ptcl)+'/'
     os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
     
-    for i in trange(N):
+    for i in range(N):
         f = fin+(ffin-fin)*i/N
         name = direc+ str(f)
         l=30
