@@ -969,7 +969,7 @@ def anomalous(f,duration, N_ptcl,progress = False):
 #     except np.linalg.LinAlgError as e:
 #         pass
 
-    plt.subplot(1,2,1)
+    plt.subplot(2,2,1)
     
     for i in range(len(autov)):
         plt.scatter(time, autov[i],s=1)
@@ -986,7 +986,7 @@ def anomalous(f,duration, N_ptcl,progress = False):
     plt.title('f :'+str(f))
 
     # diffusion
-    plt.subplot(1,2,2)
+    plt.subplot(2,2,2)
     disp = np.cumsum(v_traj,axis=1)
     msd = np.zeros(v_traj.shape)
     
@@ -1017,15 +1017,15 @@ def anomalous(f,duration, N_ptcl,progress = False):
     plt.grid()
 #     plt.legend()
     plt.title('f :'+str(f))
-    if progress:
-        plt.show()
-    else:
-        plt.savefig('image/anomalous/'+date+'f='+str(f)+'.png')
-        plt.clf()
+#     if progress:
+#         plt.show()
+#     else:
+#         plt.savefig('image/anomalous/'+date+'f='+str(f)+'.png')
+#         plt.clf()
 
 
 #     
-    
+    plt.subplot(2,1,2)
     binning = np.linspace(-1.5,1.5,100)
     plt.hist(v_traj.reshape(-1),bins=binning)
     plt.yscale('log')
@@ -1033,7 +1033,7 @@ def anomalous(f,duration, N_ptcl,progress = False):
     if progress:
         plt.show()
     else:
-        plt.savefig('image/v_hist/'+date+'f='+str(f)+'.png')
+        plt.savefig('image/anomalous/'+date+'f='+str(f)+'.png')
         plt.clf()
 
 
