@@ -416,9 +416,9 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
         load = np.load(state)
         save_dict={}
         save_dict['first'] = load['first']
-        save_dict['second'] = load['second']
-        save_dict['third'] = load['third']
-        save_dict['fourth'] = load['fourth']
+#         save_dict['second'] = load['second']
+#         save_dict['third'] = load['third']
+#         save_dict['fourth'] = load['fourth']
 
         save_dict['muw'] = load['muw']
         save_dict['Fs'] = load['Fs']
@@ -427,9 +427,9 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     except IOError:
         save_dict={}
         save_dict['first'] = np.zeros(duration)
-        save_dict['second'] = np.zeros(duration)
-        save_dict['third'] = np.zeros(duration)
-        save_dict['fourth'] = np.zeros(duration)
+#         save_dict['second'] = np.zeros(duration)
+#         save_dict['third'] = np.zeros(duration)
+#         save_dict['fourth'] = np.zeros(duration)
 
         save_dict['muw'] = RTP.muw
         save_dict['Fs'] = RTP.N_time
@@ -445,9 +445,9 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
     RTP.muw = muw
 
     first=np.zeros(duration)
-    second=np.zeros(duration)
-    third=np.zeros(duration)
-    fourth=np.zeros(duration)
+#     second=np.zeros(duration)
+#     third=np.zeros(duration)
+#     fourth=np.zeros(duration)
     
     for i in range(int(duration/5)):
         RTP.time_evolve()
@@ -460,26 +460,26 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
         RTP.time_evolve()
         
         first[i] = np.average(np.abs(RTP.v))
-        second[i]  = np.average(np.abs(RTP.v)**2)
-        third[i]  = np.average(np.abs(RTP.v)**3)
-        fourth[i]  = np.average(np.abs(RTP.v)**4)
+#         second[i]  = np.average(np.abs(RTP.v)**2)
+#         third[i]  = np.average(np.abs(RTP.v)**3)
+#         fourth[i]  = np.average(np.abs(RTP.v)**4)
     
     
     count = save_dict['count']
     save_dict['first']  *= count
-    save_dict['second'] *= count
-    save_dict['third']  *= count
-    save_dict['fourth'] *= count
+#     save_dict['second'] *= count
+#     save_dict['third']  *= count
+#     save_dict['fourth'] *= count
     save_dict['count']+=1
     count = save_dict['count']
     save_dict['first']  += first
-    save_dict['second'] += second
-    save_dict['third']  += third
-    save_dict['fourth'] += fourth
+#     save_dict['second'] += second
+#     save_dict['third']  += third
+#     save_dict['fourth'] += fourth
     save_dict['first']  /= count
-    save_dict['second'] /= count
-    save_dict['third']  /= count
-    save_dict['fourth'] /= count
+#     save_dict['second'] /= count
+#     save_dict['third']  /= count
+#     save_dict['fourth'] /= count
     
 #     os.makedirs(os.getcwd()+'/data/'+str(name),exist_ok=True)
     np.savez(state, **save_dict)
