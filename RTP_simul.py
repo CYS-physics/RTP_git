@@ -952,15 +952,15 @@ def anomalous(f,duration, N_ptcl,progress = False):
     # autocorr
     
 
-#     autov = np.zeros(v_traj.shape)
-    autov = np.zeros(duration)
+    autov = np.zeros(v_traj.shape)
+#     autov = np.zeros(duration)
     
     for i in range(int(np.log2(duration-1))):
         j_list = [1,2,3,5,7,9,11,13,17,19,21]
         for j in j_list:
             x = j*2**i
             if x<duration:
-                autov[:,x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:]),axis=1)*(v_traj[:,:-x]-np.average(v_traj[:,:-x])),axis=1)/np.average((v_traj-np.average(v_traj))**2)
+                autov[:,x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:]))*(v_traj[:,:-x]-np.average(v_traj[:,:-x])),axis=1)/np.average((v_traj-np.average(v_traj))**2)
 #                 autov[x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:]))*(v_traj[:,:-x]-np.average(v_traj[:,:-x])))/np.average((v_traj-np.average(v_traj))**2)
         
 #     try:
