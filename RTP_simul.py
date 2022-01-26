@@ -912,7 +912,7 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
 def anomalous(f,duration, N_ptcl,progress = False):
     date = '220125/'+str(N_ptcl)+'/'
     os.makedirs('image/anomalous/'+date,exist_ok=True)  
-    os.makedirs('image/v_hist/'+date,exist_ok=True)  
+#     os.makedirs('image/v_hist/'+date,exist_ok=True)  
 
 
     plt.clf()
@@ -960,7 +960,7 @@ def anomalous(f,duration, N_ptcl,progress = False):
         for j in j_list:
             x = j*2**i
             if x<duration:
-                autov[:,x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:]))*(v_traj[:,:-x]-np.average(v_traj[:,:-x])),axis=1)/np.average((v_traj-np.average(v_traj))**2)
+                autov[:,x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:]),axis=1)*(v_traj[:,:-x]-np.average(v_traj[:,:-x])),axis=1)/np.average((v_traj-np.average(v_traj))**2)
 #                 autov[x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:]))*(v_traj[:,:-x]-np.average(v_traj[:,:-x])))/np.average((v_traj-np.average(v_traj))**2)
         
 #     try:
