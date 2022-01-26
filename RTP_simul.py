@@ -305,7 +305,9 @@ class RTP_lab:     # OOP
 
         
         
-        
+def x_distribution( a=1, muFu = 1,vu = 1, duration=100, wait=100,n_bins = 200, name = 'test'):
+    RTP2 = RTP_lab(alpha=1, N_ptcl = 40000,mode=2)
+    
     # moment calculation        
 def time_moments(ptcl, number_X,L, f, t_step,  state):
     RTP3 = RTP_lab(alpha=1,len_time=200, N_time=10000, mu=1, muw = 0.01 )
@@ -908,7 +910,7 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
     
     
 def anomalous(f,duration, N_ptcl,progress = False):
-    date = '220124_1/'+str(N_ptcl)+'/'
+    date = '220125/'+str(N_ptcl)+'/'
     os.makedirs('image/anomalous/'+date,exist_ok=True)  
     os.makedirs('image/v_hist/'+date,exist_ok=True)  
 
