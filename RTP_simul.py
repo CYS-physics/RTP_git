@@ -919,15 +919,15 @@ def anomalous(f,duration, N_ptcl,progress = False):
 #     a=0.7   #fc = 0.65
 #     a=0.9 # fc = 0.77
     a = 1.1 # fc = 
-    Fs=2000
+    Fs=5000
     
-    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=10, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=30, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
     RTP.compute = False
     RTP.l = 30
-    RTP.L = 200
+    RTP.L = 300
     RTP.u = a*RTP.l*RTP.alpha/2
     RTP.F = f*RTP.u/RTP.mu
-    rho = 0.2
+    rho = 30
     RTP.muw = 1*rho*RTP.L/RTP.N_ptcl
     RTP.set_zero()
     
