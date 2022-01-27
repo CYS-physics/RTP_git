@@ -924,7 +924,7 @@ def anomalous(f,duration, N_ptcl,progress = False):
     RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=10, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
     RTP.compute = False
     RTP.l = 30
-    RTP.L = 1000
+    RTP.L = 200
     RTP.u = a*RTP.l*RTP.alpha/2
     RTP.F = f*RTP.u/RTP.mu
     rho = 0.2
