@@ -673,25 +673,23 @@ def simul_scan(f_init, f_fin, N, N_ptcl):
         simulate(N_ptcl,300,30,1,f,1000000,1000,str(N_ptcl)+'/'+str(f))
         
         
-def L_scan_moments(fin,ffin,N,L):
+def L_scan_moments(f,L):
     
-    direc ='220127/'
+    direc ='220202/'
 #     rho=10
-    rho=30
+    rho=20
 
 
     L=L
-    N_ptcl = 50*L
+    N_ptcl = 20*L
     a=1.1
     direc+='a/'+str(a)+'/L/'+str(L)+'/'
     os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
     
-    for i in range(N):
-        f = fin+(ffin-fin)*i/N
-        name = direc+ str(f)
-        l=20/a
-        Fs=3000
-        moments(N_ptcl, L, l, a, f,rho*L/N_ptcl, 300000,Fs, name)
+    name = direc+ str(f)
+    l=20/a
+    Fs=3000
+    moments(N_ptcl, L, l, a, f,rho*L/N_ptcl, 300000,Fs, name)
         
 def v_traj_scan(fin,ffin,N_f,L):
     
