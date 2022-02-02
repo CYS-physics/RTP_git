@@ -677,7 +677,7 @@ def L_scan_moments(f,L):
     
     direc ='220202_4/'
 #     rho=10
-    rho=20
+    rho=5
 
 
     L=L
