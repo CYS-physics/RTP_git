@@ -675,9 +675,9 @@ def simul_scan(f_init, f_fin, N, N_ptcl):
         
 def L_scan_moments(f,L):
     
-    direc ='220202_10/'
+    direc ='220202_11/'
 #     rho=10
-    rho=40
+    rho=10
 
 
     L=L
