@@ -910,7 +910,8 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
     
 def anomalous(f,duration, N_ptcl,progress = False):
     date = '220207/'+str(N_ptcl)+'/'
-    os.makedirs('image/anomalous/'+date,exist_ok=True)  
+    os.makedirs('image/anomalous/'+date,exist_ok=True) 
+    os.makedirs('data/anomalous'+date,exist_ok=True)
 #     os.makedirs('image/v_hist/'+date,exist_ok=True)  
 
 
@@ -1027,10 +1028,11 @@ def anomalous(f,duration, N_ptcl,progress = False):
 #         plt.clf()
 
 
+    state = 'data/anomalous'+date+str(f)+'.npz'
 #     
     plt.subplot(2,1,2)
     binning = np.linspace(-1.5,1.5,100)
-    plt.hist(v_traj.reshape(-1),bins=binning)
+    count,bins,_ = plt.hist(v_traj.reshape(-1),bins=binning)
     plt.yscale('log')
 
     if progress:
@@ -1038,6 +1040,15 @@ def anomalous(f,duration, N_ptcl,progress = False):
     else:
         plt.savefig('image/anomalous/'+date+'f='+str(f)+'.png')
         plt.clf()
+        
+        
+    save_dict['time'] = time
+    save_dict['autov'] = autov
+    save_dict['msd'] = msd
+    save_dict['count'] = count
+    save_dict['bins'] = bins
+    np.savez(state, **save_dict)
 
 
+    
 #     
