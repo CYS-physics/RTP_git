@@ -439,7 +439,7 @@ def moments(N, L, a, f, muw,duration,Fs, name):
         save_dict['Fs'] = RTP.N_time
         save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + ', a :'+str(a)
         save_dict['count'] = 0
-        save_dict['u'] = u
+        save_dict['u'] = RTP.u
         
         
 #     RTP.muw =0
