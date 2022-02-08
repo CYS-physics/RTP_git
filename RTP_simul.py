@@ -676,19 +676,19 @@ def simul_scan(f_init, f_fin, N, N_ptcl):
         
 def L_scan_moments(f,L):
     
-    direc ='220207_1/'
+    direc ='220207_2/'
 #     rho=10
-    rho=20
+    rho=30
 
 
     L=L
-    N_ptcl = 50*L
+    N_ptcl = 100*L
     a=0.9
     direc+='a/'+str(a)+'/L/'+str(L)+'/'
     os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
     
     name = direc+ str(f)
-    l=20/a
+    l=30/a
     Fs=3000
     moments(N_ptcl, L, l, a, f,rho*L/N_ptcl, 300000,Fs, name)
         
