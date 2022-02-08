@@ -403,11 +403,12 @@ def time_moments(ptcl, number_X,L, f, t_step,  state):
     else:
         moments.to_csv(title, mode='a',header=False)
         
-def moments(N, L, l, a, f, muw,duration,Fs, name):
+def moments(N, L, a, f, muw,duration,Fs, name):
     RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=40, N_ptcl=N, v=0, mu=1, muw = muw)
-    RTP.l = l
+    RTP.u = 10
+    RTP.l = 2*RTP.u/(a*RTP.alpha)
     RTP.L = L
-    RTP.u = a*l*RTP.alpha/2
+    
     RTP.F = f*RTP.u/RTP.mu
     
     RTP.set_zero()
@@ -426,6 +427,7 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
         save_dict['Fs'] = load['Fs']
         save_dict['description'] = load['description']
         save_dict['count'] = load['count']
+        save_dict['u'] = load['u']
     except IOError:
         save_dict={}
         save_dict['first'] = np.zeros(duration)
@@ -437,6 +439,7 @@ def moments(N, L, l, a, f, muw,duration,Fs, name):
         save_dict['Fs'] = RTP.N_time
         save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + ', a :'+str(a)
         save_dict['count'] = 0
+        save_dict['u'] = u
         
         
 #     RTP.muw =0
@@ -663,7 +666,7 @@ def N_scan_moments(fin,ffin,N,N_ptcl):
         f = fin+(ffin-fin)*i/N
         
         name = direc+ str(f)
-        l=30
+        l=20/a
         a=1
         Fs=2000
         moments(N_ptcl, L, l, a, f,rho*L/N_ptcl, 50000,Fs, name)
@@ -676,21 +679,20 @@ def simul_scan(f_init, f_fin, N, N_ptcl):
         
 def L_scan_moments(f,L):
     
-    direc ='220207_2/'
+    direc ='220207_3/'
 #     rho=10
-    rho=30
+    rho=50
 
 
     L=L
-    N_ptcl = 100*L
+    N_ptcl = 200*L
     a=0.9
     direc+='a/'+str(a)+'/L/'+str(L)+'/'
     os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
     
     name = direc+ str(f)
-    l=30/a
     Fs=3000
-    moments(N_ptcl, L, l, a, f,rho*L/N_ptcl, 300000,Fs, name)
+    moments(N_ptcl, L, a, f,rho*L/N_ptcl, 300000,Fs, name)
         
 def v_traj_scan(fin,ffin,N_f,L):
     
