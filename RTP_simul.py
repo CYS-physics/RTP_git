@@ -677,15 +677,15 @@ def simul_scan(f_init, f_fin, N, N_ptcl):
         simulate(N_ptcl,300,30,1,f,1000000,1000,str(N_ptcl)+'/'+str(f))
         
         
-def L_scan_moments(f,L):
+def L_scan_moments(f,L,rho,N_rho):
     
-    direc ='220207_3/'
+    direc ='220209/rho='+str(rho)+',N_rho='+str(N_rho)+'/'
 #     rho=10
-    rho=50
+    rho=rho
 
 
     L=L
-    N_ptcl = 200*L
+    N_ptcl = N_rho*L
     a=0.9
     direc+='a/'+str(a)+'/L/'+str(L)+'/'
     os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
