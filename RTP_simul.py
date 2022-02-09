@@ -1030,7 +1030,6 @@ def anomalous(f,duration, N_ptcl,progress = False):
 #         plt.clf()
 
 
-    state = 'data/anomalous'+date+str(f)+'.npz'
 #     
     plt.subplot(2,1,2)
     binning = np.linspace(-1.5,1.5,100)
@@ -1043,7 +1042,8 @@ def anomalous(f,duration, N_ptcl,progress = False):
         plt.savefig('image/anomalous/'+date+'f='+str(f)+'.png')
         plt.clf()
         
-        
+    state = 'data/anomalous/'+date+str(f)+'.npz'
+
     save_dict['time'] = time
     save_dict['autov'] = autov
     save_dict['msd'] = msd
