@@ -1042,8 +1042,8 @@ def anomalous(f,duration, N_ptcl,progress = False):
         plt.savefig('image/anomalous/'+date+'f='+str(f)+'.png')
         plt.clf()
         
-    state = 'data/anomalous/'+date+str(f)+'.npz'
-
+    state = 'data/anomalous/'+date+'f='+str(f)+'.npz'
+    save_dict = {}
     save_dict['time'] = time
     save_dict['autov'] = autov
     save_dict['msd'] = msd
