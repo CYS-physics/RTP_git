@@ -958,9 +958,8 @@ def anomalous(f,duration, N_ptcl,progress = False):
 
     autov = np.zeros(v_traj.shape)
 #     autov = np.zeros(duration)
-    
+    j_list = [1,2,3,5,7,9,11,13,17,19,21]
     for i in range(int(np.log2(duration-1))):
-        j_list = [1,2,3,5,7,9,11,13,17,19,21]
         for j in j_list:
             x = j*2**i
             if x<duration:
@@ -997,7 +996,6 @@ def anomalous(f,duration, N_ptcl,progress = False):
     msd = np.zeros(v_traj.shape)
     
     for i in range(int(np.log2(duration-1))):
-        j_list = [1,2,3,5,7,11,13,15,17,19,21]
         for j in j_list:
             x = j*2**i
             if x<duration:
@@ -1044,9 +1042,9 @@ def anomalous(f,duration, N_ptcl,progress = False):
         
     state = 'data/anomalous/'+date+'f='+str(f)+'.npz'
     save_dict = {}
-    save_dict['time'] = time
-    save_dict['autov'] = autov
-    save_dict['msd'] = msd
+    save_dict['time'] = time[msd!=0]
+    save_dict['autov'] = autov[msd!=0]
+    save_dict['msd'] = msd[msd!=0]
     save_dict['count'] = count
     save_dict['bins'] = bins
     np.savez(state, **save_dict)
