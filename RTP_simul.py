@@ -1042,7 +1042,7 @@ def anomalous(f,duration, N_ptcl,progress = False):
         
     state = 'data/anomalous/'+date+'f='+str(f)+'.npz'
     save_dict = {}
-    save_dict['time'] = time[msd!=0]
+    save_dict['time'] = time[msd[0]!=0]
     save_dict['autov'] = autov[msd!=0]
     save_dict['msd'] = msd[msd!=0]
     save_dict['count'] = count
