@@ -662,7 +662,7 @@ def scan_v(N, L, l, a, f,duration,Fs, direc):
     
     
 def N_scan_v(f,N_ptcl):
-    direc ='/data/220216/'
+    direc =os.getcwd()+'/data/220216/'
     direc+='N/'+str(N_ptcl)+'/'
 
 
