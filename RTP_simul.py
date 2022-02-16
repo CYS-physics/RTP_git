@@ -611,20 +611,69 @@ def simulate(N, L, l, a, f,duration,Fs, name):
     
 #     np.savez(state, **save_dict)
     
-def N_scan(fin,ffin,N,N_ptcl):
-    direc ='1218/'
+def scan_v(N, L, l, a, f,duration,Fs, direc):
+    os.makedirs(direc,exist_ok=True)
+    state = str(direc+str(f))+'.npz'
+    
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=10, N_ptcl=N, v=0, mu=1, muw = 1)
+    RTP.l = l    # 30
+    RTP.L = L    # 300
+    RTP.u = a*l*RTP.alpha/2   # 15  
+    RTP.F = f*RTP.u/RTP.mu
+    
+    rho = 0.1
+    RTP.muw = rho*L/RTP.N_ptcl
+
+    RTP.set_zero()
+
+    v_list = duration*[None]
+    
+
+    for i in range(int(duration/5)):
+        RTP.time_evolve()
+    
+    for i in trange(duration):
+        RTP.time_evolve()
+        v_list[i] = RTP.v
+
+    v_traj = np.array(v_list).flatten()
+    
+    v_binning = np.linspace(-2,2,200)
+    
+    count,bins,_ = plt.hist(v_traj.reshape(-1)/RTP.u,bins=v_binning,density=True)
+        
+    save_dict={}
+#     save_dict['dS1'] = dS1_list
+#     save_dict['dS2'] = dS2_list
+
+    save_dict['u'] = RTP.u
+    save_dict['v_bin'] = v_binning
+    save_dict['v_count'] = count
+
+    save_dict['muw'] = RTP.muw
+# #     save_dict['current'] = pd.concat(current_list)
+#     save_dict['Fs'] = RTP.N_time
+#     save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + 'a :'+str(a)
+
+    
+    
+    np.savez(state, **save_dict)
+        
+    
+    
+    
+def N_scan_v(f,N_ptcl):
+    direc ='/data/220216/'
+    direc+='N/'+str(N_ptcl)+'/'
+
+
     rho=1
     L=300
-    direc+='N/'+str(N_ptcl)+'/'
-    os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
     
-    for i in trange(N):
-        f = fin+(ffin-fin)*i/N
-        name = direc+ str(f)
-        l=30
-        alpha=1
-        Fs=10000
-        simulate(N_ptcl, L, l, alpha, f,1*rho*L/N_ptcl, 1000000,Fs, name)
+    l=30
+    a=1
+    Fs=10000
+    scan_v(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 1000000,Fs, direc)
 
 def rho_scan(fin,ffin,N,rho):
     direc ='1210/'
