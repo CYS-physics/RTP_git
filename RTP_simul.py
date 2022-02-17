@@ -632,7 +632,7 @@ def scan_v(N, L, l, a, f,duration,Fs, direc):
     for i in range(int(duration/5)):
         RTP.time_evolve()
     
-    for i in trange(duration):
+    for i in range(duration):
         RTP.time_evolve()
         v_list[i] = RTP.v
 
@@ -673,7 +673,7 @@ def N_scan_v(f,N_ptcl):
     l=30
     a=1
     Fs=10000
-    scan_v(N_ptcl, L, l, a, f, 100,Fs, direc)
+    scan_v(N_ptcl, L, l, a, f, 1000000,Fs, direc)
 
 def rho_scan(fin,ffin,N,rho):
     direc ='1210/'
