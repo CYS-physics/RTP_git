@@ -974,9 +974,9 @@ def anomalous(f,duration, N_ptcl,progress = False):
     
     RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=30, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
     RTP.compute = False
-    RTP.u = 10
-    RTP.l = 2*RTP.u/(a*RTP.alpha)
+    RTP.l = 30
     RTP.L = 300
+    RTP.u = a*RTP.l*RTP.alpha/2
     
     RTP.F = f*RTP.u/RTP.mu
     rho = 100
@@ -987,14 +987,14 @@ def anomalous(f,duration, N_ptcl,progress = False):
     time = (np.arange(duration)+1)*RTP.delta_time
     
     if progress:
-        for _ in trange(20000):
+        for _ in trange(2000):
             RTP.time_evolve()
         for i in trange(duration):
             RTP.time_evolve()
             v_traj[:,i] = RTP.v/RTP.u
             
     else:
-        for _ in range(20000):
+        for _ in range(2000):
             RTP.time_evolve()
         for i in range(duration):
             RTP.time_evolve()
@@ -1012,7 +1012,7 @@ def anomalous(f,duration, N_ptcl,progress = False):
         for j in j_list:
             x = j*2**i
             if x<duration:
-                autov[:,x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:]))*(v_traj[:,:-x]-np.average(v_traj[:,:-x])),axis=1)/np.average((v_traj-np.average(v_traj))**2)
+                autov[:,x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:],axis=1))*(v_traj[:,:-x]-np.average(v_traj[:,:-x],axis=1)),axis=1)/np.average((v_traj-np.average(v_traj,axis=1))**2)
 #                 autov[x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:]))*(v_traj[:,:-x]-np.average(v_traj[:,:-x])))/np.average((v_traj-np.average(v_traj))**2)
         
 #     try:
