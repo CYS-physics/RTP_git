@@ -610,7 +610,7 @@ def simulate(N, L, l, a, f,duration,Fs, name):
     
     
 #     np.savez(state, **save_dict)
-def scan_v(N, L, l, a, f,duration,Fs, direc):
+def scan_v(N, L, l, a, f,rho,duration,Fs, direc):
     os.makedirs(direc,exist_ok=True)
     state = direc+str(f)+'.npz'
     
@@ -621,7 +621,7 @@ def scan_v(N, L, l, a, f,duration,Fs, direc):
     RTP.u = a*l*RTP.alpha/2   # 15  
     RTP.F = f*RTP.u/RTP.mu
     
-    rho = 0.1
+    rho = rho
     RTP.muw = rho*L/RTP.N_ptcl
 
     RTP.set_zero()
@@ -663,17 +663,17 @@ def scan_v(N, L, l, a, f,duration,Fs, direc):
     
     
 def N_scan_v(f,N_ptcl):
-    direc =os.getcwd()+'/data/220216/'
+    direc =os.getcwd()+'/data/220221/'
     direc+='N/'+str(N_ptcl)+'/'
 
 
-    rho=1
+    rho=10
     L=300
     
     l=30
     a=1
     Fs=10000
-    scan_v(N_ptcl, L, l, a, f, 1000000,Fs, direc)
+    scan_v(N_ptcl, L, l, a, f,rho, 1000000,Fs, direc)
 
 def rho_scan(fin,ffin,N,rho):
     direc ='1210/'
