@@ -403,7 +403,11 @@ def time_moments(ptcl, number_X,L, f, t_step,  state):
     else:
         moments.to_csv(title, mode='a',header=False)
         
-def moments(N, L, a, f, muw,duration,Fs, name):
+def moments(N, L, a, f, muw,duration,Fs, direc):
+    os.makedirs(os.getcwd()+direc,exist_ok=True)
+    state = os.getcwd()+direc+str(f)+'.npz'
+
+    
     RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=40, N_ptcl=N, v=0, mu=1, muw = muw)
     RTP.u = 10
     RTP.l = 2*RTP.u/(a*RTP.alpha)
@@ -414,32 +418,13 @@ def moments(N, L, a, f, muw,duration,Fs, name):
     RTP.set_zero()
         
     
-    state = os.getcwd()+'/data/'+str(name)+'.npz'
-    try:
-        load = np.load(state)
-        save_dict={}
-        save_dict['first'] = load['first']
-#         save_dict['second'] = load['second']
-#         save_dict['third'] = load['third']
-#         save_dict['fourth'] = load['fourth']
+    
+    save_dict={}
 
-        save_dict['muw'] = load['muw']
-        save_dict['Fs'] = load['Fs']
-        save_dict['description'] = load['description']
-        save_dict['count'] = load['count']
-        save_dict['u'] = load['u']
-    except IOError:
-        save_dict={}
-        save_dict['first'] = np.zeros(duration)
-#         save_dict['second'] = np.zeros(duration)
-#         save_dict['third'] = np.zeros(duration)
-#         save_dict['fourth'] = np.zeros(duration)
-
-        save_dict['muw'] = RTP.muw
-        save_dict['Fs'] = RTP.N_time
-        save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + ', a :'+str(a)
-        save_dict['count'] = 0
-        save_dict['u'] = RTP.u
+    save_dict['muw'] = RTP.muw
+    save_dict['Fs'] = RTP.N_time
+    save_dict['description'] = 'L : '+str(RTP.L)+', N : '+str(RTP.N_ptcl)+', f : '+str(f) + ', a :'+str(a)
+    save_dict['u'] = RTP.u
         
         
 #     RTP.muw =0
@@ -449,10 +434,10 @@ def moments(N, L, a, f, muw,duration,Fs, name):
         
     RTP.muw = muw
 
-    first=np.zeros(duration)
-#     second=np.zeros(duration)
-#     third=np.zeros(duration)
-#     fourth=np.zeros(duration)
+    first=0
+    second=0
+    third=0
+    fourth=0
     
     for i in range(int(duration/5)):
         RTP.time_evolve()
@@ -464,29 +449,21 @@ def moments(N, L, a, f, muw,duration,Fs, name):
     for i in range(duration):
         RTP.time_evolve()
         
-        first[i] = np.average(np.abs(RTP.v))
-#         second[i]  = np.average(np.abs(RTP.v)**2)
-#         third[i]  = np.average(np.abs(RTP.v)**3)
-#         fourth[i]  = np.average(np.abs(RTP.v)**4)
+        first[i] += np.average(np.abs(RTP.v))
+        second[i]  += np.average(np.abs(RTP.v)**2)
+        third[i]  += np.average(np.abs(RTP.v)**3)
+        fourth[i]  += np.average(np.abs(RTP.v)**4)
     
+    first/=duration
+    second/=duration
+    third/=duration
+    fourth/=duration
     
-    count = save_dict['count']
-    save_dict['first']  *= count
-#     save_dict['second'] *= count
-#     save_dict['third']  *= count
-#     save_dict['fourth'] *= count
-    save_dict['count']+=1
-    count = save_dict['count']
-    save_dict['first']  += first
-#     save_dict['second'] += second
-#     save_dict['third']  += third
-#     save_dict['fourth'] += fourth
-    save_dict['first']  /= count
-#     save_dict['second'] /= count
-#     save_dict['third']  /= count
-#     save_dict['fourth'] /= count
+    save_dict['first']  = first
+    save_dict['second'] = second
+    save_dict['third']  = third
+    save_dict['fourth'] = fourth
     
-#     os.makedirs(os.getcwd()+'/data/'+str(name),exist_ok=True)
     np.savez(state, **save_dict)
     
     
@@ -704,21 +681,15 @@ def L_scan(fin,ffin,N,L):
         simulate(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 1000000,Fs, name)
         
         
-def N_scan_moments(fin,ffin,N,N_ptcl):
-    direc ='1231/'
+def N_scan_moments(f,N_ptcl):
+    direc ='/data/binder/220223/'
     rho=1
     L=300
     direc+='N/'+str(N_ptcl)+'/'
-    os.makedirs(os.getcwd()+'/data/'+direc,exist_ok=True)
-    
-    for i in range(N):
-        f = fin+(ffin-fin)*i/N
-        
-        name = direc+ str(f)
-        l=20/a
-        a=1
-        Fs=2000
-        moments(N_ptcl, L, l, a, f,rho*L/N_ptcl, 50000,Fs, name)
+    l=20
+    a=1
+    Fs=10000
+    moments(N_ptcl, L, l, a, f,rho*L/N_ptcl, 50000,Fs, direc)
     
 def simul_scan(f_init, f_fin, N, N_ptcl):
     for i in trange(N):
