@@ -941,7 +941,7 @@ def anomalous(f,duration, N_ptcl,progress = False):
 #     a=0.7   #fc = 0.65
 #     a=0.9 # fc = 0.77
     a = 1.1 # fc = 
-    Fs=5000
+    Fs=10000
     
     RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=300, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
     RTP.compute = False
@@ -950,7 +950,7 @@ def anomalous(f,duration, N_ptcl,progress = False):
     RTP.u = a*RTP.l*RTP.alpha/2
     
     RTP.F = f*RTP.u/RTP.mu
-    rho = 100
+    rho = 10
     RTP.muw = rho*RTP.L/RTP.N_ptcl
     RTP.set_zero()
     
@@ -958,14 +958,14 @@ def anomalous(f,duration, N_ptcl,progress = False):
     time = (np.arange(duration)+1)*RTP.delta_time
     
     if progress:
-        for _ in trange(2000):
+        for _ in trange(20000):
             RTP.time_evolve()
         for i in trange(duration):
             RTP.time_evolve()
             v_traj[:,i] = RTP.v/RTP.u
             
     else:
-        for _ in range(2000):
+        for _ in range(20000):
             RTP.time_evolve()
         for i in range(duration):
             RTP.time_evolve()
