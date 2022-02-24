@@ -689,7 +689,7 @@ def N_scan_moments(f,N_ptcl):
     l=20
     a=1
     Fs=10000
-    moments(N_ptcl, L, l, a, f,rho*L/N_ptcl, 50000,Fs, direc)
+    moments(N_ptcl, L, a, f,rho*L/N_ptcl, 50000,Fs, direc)
     
 def simul_scan(f_init, f_fin, N, N_ptcl):
     for i in trange(N):
