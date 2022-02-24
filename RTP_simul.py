@@ -699,7 +699,7 @@ def simul_scan(f_init, f_fin, N, N_ptcl):
         
 def L_scan_moments(f,L,rho,N_rho):
     
-    direc ='220217/rho='+str(rho)+',N_rho='+str(N_rho)+'/'
+    direc ='slowdown/220224/rho='+str(rho)+',N_rho='+str(N_rho)+'/'
 #     rho=10
     rho=rho
 
@@ -931,7 +931,7 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
     
     
 def anomalous(f,duration, N_ptcl,progress = False):
-    date = '220223/'+str(N_ptcl)+'/'
+    date = '220224/'+str(N_ptcl)+'/'
     os.makedirs('image/anomalous/'+date,exist_ok=True) 
     os.makedirs('data/anomalous/'+date,exist_ok=True)
 #     os.makedirs('image/v_hist/'+date,exist_ok=True)  
@@ -978,12 +978,13 @@ def anomalous(f,duration, N_ptcl,progress = False):
 
     autov = np.zeros(v_traj.shape)
 #     autov = np.zeros(duration)
+    autov[:,0] = np.average((v_traj)*(v_traj),axis=1)-np.average((v_traj),axis=1)**2
     j_list = [1,2,3,5,7,9,11,13,17,19,21]
     for i in range(int(np.log2(duration-1))):
         for j in j_list:
             x = j*2**i
             if x<duration:
-                autov[:,x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:],axis=1).reshape(-1,1))*(v_traj[:,:-x]-np.average(v_traj[:,:-x],axis=1).reshape(-1,1)),axis=1)/np.average((v_traj-np.average(v_traj))**2)
+                autov[:,x] = np.average((v_traj[:,x:])*(v_traj[:,:-x]),axis=1)-np.average((v_traj[:,x:]),axis=1)*np.average((v_traj[:,:-x]),axis=1)
 #                 autov[x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:]))*(v_traj[:,:-x]-np.average(v_traj[:,:-x])))/np.average((v_traj-np.average(v_traj))**2)
         
 #     try:
@@ -1063,6 +1064,7 @@ def anomalous(f,duration, N_ptcl,progress = False):
     state = 'data/anomalous/'+date+'f='+str(f)+'.npz'
     save_dict = {}
     save_dict['time'] = time[msd[0]!=0]
+    save_dict['autov0'] = autov[:,0]
     save_dict['autov'] = autov[msd!=0]
     save_dict['msd'] = msd[msd!=0]
     save_dict['count'] = count
