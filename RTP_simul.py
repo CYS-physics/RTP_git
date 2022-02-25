@@ -449,10 +449,10 @@ def moments(N, L, a, f, muw,duration,Fs, direc):
     for i in range(duration):
         RTP.time_evolve()
         
-        first[i] += np.average(np.abs(RTP.v))
-        second[i]  += np.average(np.abs(RTP.v)**2)
-        third[i]  += np.average(np.abs(RTP.v)**3)
-        fourth[i]  += np.average(np.abs(RTP.v)**4)
+        first += np.average(np.abs(RTP.v))
+        second  += np.average(np.abs(RTP.v)**2)
+        third  += np.average(np.abs(RTP.v)**3)
+        fourth  += np.average(np.abs(RTP.v)**4)
     
     first/=duration
     second/=duration
