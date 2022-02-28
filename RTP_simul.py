@@ -935,7 +935,7 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
     
     
 def anomalous(f,duration, N_ptcl,progress = False):
-    date = '220228/'+str(N_ptcl)+'/'
+    date = '220301/'+str(N_ptcl)+'/'
     os.makedirs('image/anomalous/'+date,exist_ok=True) 
     os.makedirs('data/anomalous/'+date,exist_ok=True)
 #     os.makedirs('image/v_hist/'+date,exist_ok=True)  
@@ -945,9 +945,9 @@ def anomalous(f,duration, N_ptcl,progress = False):
 #     a=0.7   #fc = 0.65
 #     a=0.9 # fc = 0.77
     a = 1.1 # fc = 
-    Fs=10000
+    Fs=20000
     
-    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=300, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=1000, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
     RTP.compute = False
     RTP.l = 30
     RTP.L = 300
@@ -962,14 +962,14 @@ def anomalous(f,duration, N_ptcl,progress = False):
     time = (np.arange(duration)+1)*RTP.delta_time
     
     if progress:
-        for _ in trange(2000):
+        for _ in trange(1000):
             RTP.time_evolve()
         for i in trange(duration):
             RTP.time_evolve()
             v_traj[:,i] = RTP.v/RTP.u
             
     else:
-        for _ in range(2000):
+        for _ in range(1000):
             RTP.time_evolve()
         for i in range(duration):
             RTP.time_evolve()
