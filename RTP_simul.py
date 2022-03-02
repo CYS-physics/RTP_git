@@ -683,7 +683,7 @@ def L_scan(fin,ffin,N,L):
         
 def N_scan_moments(f,N_ptcl):
 #     direc ='/data/binder/220223/'
-    direc ='/data/transition/220228/'
+    direc ='/data/transition/220302/'
 
 
     rho=1
