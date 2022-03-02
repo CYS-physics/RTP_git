@@ -683,15 +683,16 @@ def L_scan(fin,ffin,N,L):
         
 def N_scan_moments(f,N_ptcl):
 #     direc ='/data/binder/220223/'
-    direc ='/data/transition/220302/'
+#     direc ='/data/transition/220228/'   # lp = 2.5
+    direc ='/data/transition/220302/'     #lp = 1
 
 
     rho=1
     L=300
     direc+='N/'+str(N_ptcl)+'/'
     l=20
-#     a=1
-    a=2.5
+    a=1
+#     a=2.5
     Fs=10000
     moments(N_ptcl, L, a, f,rho*L/N_ptcl, 50000,Fs, direc)
     
