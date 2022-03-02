@@ -408,7 +408,7 @@ def moments(N, L, a, f, muw,duration,Fs, direc):
     state = os.getcwd()+direc+str(f)+'.npz'
 
     
-    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=40, N_ptcl=N, v=0, mu=1, muw = muw)
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=200, N_ptcl=N, v=0, mu=1, muw = muw)
     RTP.u = 10
     RTP.l = 2*RTP.u/(a*RTP.alpha)
     RTP.L = L
@@ -684,7 +684,9 @@ def L_scan(fin,ffin,N,L):
 def N_scan_moments(f,N_ptcl):
 #     direc ='/data/binder/220223/'
 #     direc ='/data/transition/220228/'   # lp = 2.5
-    direc ='/data/transition/220302/'     #lp = 1
+#     direc ='/data/transition/220302/'     #lp = 1
+    direc ='/data/transition/220303/'     #lp = 1 finer
+
 
 
     rho=1
@@ -694,7 +696,7 @@ def N_scan_moments(f,N_ptcl):
     a=1
 #     a=2.5
     Fs=10000
-    moments(N_ptcl, L, a, f,rho*L/N_ptcl, 50000,Fs, direc)
+    moments(N_ptcl, L, a, f,rho*L/N_ptcl, 200000,Fs, direc)
     
 def simul_scan(f_init, f_fin, N, N_ptcl):
     for i in trange(N):
