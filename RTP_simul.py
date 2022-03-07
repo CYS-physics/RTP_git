@@ -405,10 +405,14 @@ def time_moments(ptcl, number_X,L, f, t_step,  state):
         
 def moments(N, L, a, f, muw,duration,Fs, direc):
     os.makedirs(os.getcwd()+direc,exist_ok=True)
-    state = os.getcwd()+direc+str(f)+'.npz'
+    state = os.getcwd()+direc+str(f)+'.csv'
+    if (not (os.path.exists(state))):
+        file = open(state,'a')
+        file.write('first,second,third,fourth\n')
+        file.close()
 
     
-    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=200, N_ptcl=N, v=0, mu=1, muw = muw)
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=10, N_ptcl=N, v=0, mu=1, muw = muw)
     RTP.u = 10
     RTP.l = 2*RTP.u/(a*RTP.alpha)
     RTP.L = L
@@ -459,12 +463,18 @@ def moments(N, L, a, f, muw,duration,Fs, direc):
     third/=duration
     fourth/=duration
     
-    save_dict['first']  = first
-    save_dict['second'] = second
-    save_dict['third']  = third
-    save_dict['fourth'] = fourth
+#     save_dict['first']  = first
+#     save_dict['second'] = second
+#     save_dict['third']  = third
+#     save_dict['fourth'] = fourth
     
     np.savez(state, **save_dict)
+    
+    file = open(state,'a')
+    file.write(str(first)+','+str(second)+','+str(third)+','+str(fourth)+'\n')
+    file.close()
+    
+    
     
     
 def trajectory(N, L, l, a, f, muw,duration,Fs, name):
@@ -685,7 +695,9 @@ def N_scan_moments(f,N_ptcl):
 #     direc ='/data/binder/220223/'
 #     direc ='/data/transition/220228/'   # lp = 2.5
 #     direc ='/data/transition/220302/'     #lp = 1
-    direc ='/data/transition/220303/'     #lp = 1 finer
+#     direc ='/data/transition/220303/'     #lp = 1 finer
+    direc ='/data/transition/220307/'     #lp = 1 csv
+
 
 
 
