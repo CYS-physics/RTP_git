@@ -403,7 +403,7 @@ def time_moments(ptcl, number_X,L, f, t_step,  state):
     else:
         moments.to_csv(title, mode='a',header=False)
         
-def moments(N, L, a, f, muw,duration,Fs, direc):
+def moments(N, L, a, f, muw,duration,Fs,N_X, direc):
     os.makedirs(os.getcwd()+direc,exist_ok=True)
     state = os.getcwd()+direc+str(f)+'.csv'
     if (not (os.path.exists(state))):
@@ -412,7 +412,7 @@ def moments(N, L, a, f, muw,duration,Fs, direc):
         file.close()
 
     
-    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=10, N_ptcl=N, v=0, mu=1, muw = muw)
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=N_X, N_ptcl=N, v=0, mu=1, muw = muw)
     RTP.u = 10
     RTP.l = 2*RTP.u/(a*RTP.alpha)
     RTP.L = L
@@ -691,7 +691,7 @@ def L_scan(fin,ffin,N,L):
         simulate(N_ptcl, L, l, a, f,1*rho*L/N_ptcl, 1000000,Fs, name)
         
         
-def N_scan_moments(f,N_ptcl):
+def N_scan_moments(f,N_ptcl,N_X):
 #     direc ='/data/binder/220223/'
 #     direc ='/data/transition/220228/'   # lp = 2.5
 #     direc ='/data/transition/220302/'     #lp = 1
@@ -708,7 +708,7 @@ def N_scan_moments(f,N_ptcl):
     a=1
 #     a=2.5
     Fs=10000
-    moments(N_ptcl, L, a, f,rho*L/N_ptcl, 200000,Fs, direc)
+    moments(N_ptcl, L, a, f,rho*L/N_ptcl, 200000,Fs,N_X, direc)
     
 def simul_scan(f_init, f_fin, N, N_ptcl):
     for i in trange(N):
