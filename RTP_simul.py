@@ -408,7 +408,7 @@ def moments(N, L, a, f, muw,duration,Fs,N_X, direc):
     state = os.getcwd()+direc+str(f)+'.csv'
     if (not (os.path.exists(state))):
         file = open(state,'a')
-        file.write('first,second,third,fourth\n')
+        file.write('first,second,third,fourth,N_ens\n')
         file.close()
 
     
@@ -471,7 +471,7 @@ def moments(N, L, a, f, muw,duration,Fs,N_X, direc):
     np.savez(state, **save_dict)
     
     file = open(state,'a')
-    file.write(str(first)+','+str(second)+','+str(third)+','+str(fourth)+'\n')
+    file.write(str(first)+','+str(second)+','+str(third)+','+str(fourth)+','+str(N_X)+'\n')
     file.close()
     
     
@@ -660,7 +660,7 @@ def N_scan_v(f,N_ptcl):
     l=20
     a=1
     Fs=10000
-    scan_v(N_ptcl, L, l, a, f,rho, 1000000,Fs, direc)
+    scan_v(N_ptcl, L, l, a, f,rho, 500000,Fs, direc)
 
 def rho_scan(fin,ffin,N,rho):
     direc ='1210/'
@@ -696,7 +696,7 @@ def N_scan_moments(f,N_ptcl,N_X):
 #     direc ='/data/transition/220228/'   # lp = 2.5
 #     direc ='/data/transition/220302/'     #lp = 1
 #     direc ='/data/transition/220303/'     #lp = 1 finer
-    direc ='/data/transition/220307/'     #lp = 1 csv
+    direc ='/data/transition/220317/'     #lp = 1 csv
 
 
 
@@ -707,7 +707,7 @@ def N_scan_moments(f,N_ptcl,N_X):
     l=20
     a=1
 #     a=2.5
-    Fs=10000
+    Fs=2000
     moments(N_ptcl, L, a, f,rho*L/N_ptcl, 200000,Fs,N_X, direc)
     
 def simul_scan(f_init, f_fin, N, N_ptcl):
