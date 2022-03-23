@@ -952,7 +952,6 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
 def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     direc = '220323/N='+str(N_ptcl)+'/t_init='+str(t_in)+'/''
     os.makedirs('data/ageing/'+direc,exist_ok=True)
-    state = os.getcwd()+direc+str(f)+'.npz'
 
     Fs = 20000
     RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=2000, N_ptcl=N, v=0, mu=1, muw = muw)
@@ -1003,6 +1002,12 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     save_dict['autov0'] = autov[:,0]
     save_dict['autov'] = autov[autov!=0]
     save_dict['msd'] = msd
+    save_dict['N_X'] = RTP.N_X
+    iter = 0
+    state = os.getcwd()+direc+str(f)+'_'+str(iter)+'.npz'
+    while os.path.isfile(state):
+        iter+=1
+        state = os.getcwd()+direc+str(f)+'_'+str(iter)+'.npz'
     np.savez(state, **save_dict)
     
     
