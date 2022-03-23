@@ -1009,8 +1009,8 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     state = os.getcwd()+direc+str(f)+'_'+str(iter)+'.npz'
     while True:
         if os.path.isfile(state):
-        iter+=1
-        state = os.getcwd()+direc+str(f)+'_'+str(iter)+'.npz'
+            iter+=1
+            state = os.getcwd()+direc+str(f)+'_'+str(iter)+'.npz'
         else:
             break
     np.savez(state, **save_dict)
