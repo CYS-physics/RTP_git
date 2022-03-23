@@ -949,6 +949,63 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
 #     return corr/z_max
     
     
+def ageing(f,t_in,t_dur,N_ptcl,progress = False):
+    direc = '220323/N='+str(N_ptcl)+'/t_init='+str(t_in)+'/''
+    os.makedirs('data/ageing/'+direc,exist_ok=True)
+    state = os.getcwd()+direc+str(f)+'.npz'
+
+    Fs = 20000
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=2000, N_ptcl=N, v=0, mu=1, muw = muw)
+    RTP.a = 1
+    RTP.u = 10
+    RTP.alpha=1
+    RTP.l = 2*RTP.u/(a*RTP.alpha)
+    RTP.L = 300
+    
+    RTP.F = f*RTP.u/RTP.mu
+    
+    RTP.set_zero()
+    
+    duration = t_dur*Fs
+    initiation = t_in*Fs
+    
+    v_traj = np.empty((RTP.N_X,duration))
+    time = (np.arange(duration)+1)*RTP.delta_time
+    
+    if progress:
+        for _ in trange(initialization):
+            RTP.time_evolve()
+        for i in trange(duration):
+            RTP.time_evolve()
+            v_traj[:,i] = RTP.v/RTP.u
+            
+    else:
+        for _ in range(initialization):
+            RTP.time_evolve()
+        for i in range(duration):
+            RTP.time_evolve()
+            v_traj[:,i] = RTP.v/RTP.u
+            
+    msd = np.average(np.cumsum(v_traj,axis=1)**2,axis=0)*RTP.delta_time**2
+    autov = np.zeros(v_traj.shape)
+#     autov = np.zeros(duration)
+    autov[:,0] = np.average((v_traj)*(v_traj),axis=1)-np.average((v_traj),axis=1)**2
+    j_list = [1,2,3,5,7,9,11,13,17,19,21]
+    for i in range(int(np.log2(duration-1))):
+        for j in j_list:
+            x = j*2**i
+            if x<duration:
+                autov[:,x] = np.average((v_traj[:,x:])*(v_traj[:,:-x]),axis=1)-np.average((v_traj[:,x:]),axis=1)*np.average((v_traj[:,:-x]),axis=1)
+                
+    save_dict = {}
+    save_dict['dt'] = RTP.delta_time
+    save_dict['time'] = time[autov[0]!=0]
+    save_dict['autov0'] = autov[:,0]
+    save_dict['autov'] = autov[autov!=0]
+    save_dict['msd'] = msd
+    np.savez(state, **save_dict)
+    
+    
 def anomalous(f,duration, N_ptcl,progress = False):
     date = '220301/'+str(N_ptcl)+'/'
     os.makedirs('image/anomalous/'+date,exist_ok=True) 
