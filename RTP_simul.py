@@ -974,14 +974,14 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     time = (np.arange(duration)+1)*RTP.delta_time
     
     if progress:
-        for _ in trange(initialization):
+        for _ in trange(initiation):
             RTP.time_evolve()
         for i in trange(duration):
             RTP.time_evolve()
             v_traj[:,i] = RTP.v/RTP.u
             
     else:
-        for _ in range(initialization):
+        for _ in range(initiation):
             RTP.time_evolve()
         for i in range(duration):
             RTP.time_evolve()
