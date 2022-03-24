@@ -1006,7 +1006,7 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     save_dict['msd'] = msd
     save_dict['N_X'] = RTP.N_X
     iter = 0
-    state = os.getcwd()+direc+str(f)+'_'+str(iter)+'.npz'
+    state = os.getcwd()+'/data/ageing/'+direc+str(f)+'_'+str(iter)+'.npz'
     while True:
         if os.path.isfile(state):
             iter+=1
