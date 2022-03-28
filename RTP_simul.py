@@ -950,7 +950,7 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
     
     
 def ageing(f,t_in,t_dur,N_ptcl,progress = False):
-    direc = '220323/N='+str(N_ptcl)+'/t_init='+str(t_in)+'/'
+    direc = '220328/N='+str(N_ptcl)+'/t_init='+str(t_in)+'/'
     os.makedirs('data/ageing/'+direc,exist_ok=True)
 
     Fs = 20000
@@ -988,22 +988,22 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
             v_traj[:,i] = RTP.v/RTP.u
             
     msd = np.average(np.cumsum(v_traj,axis=1)**2,axis=0)*RTP.delta_time**2
-    autov = np.zeros(v_traj.shape)
+    autov = np.zeros(duration)
 #     autov = np.zeros(duration)
-    autov[:,0] = np.average((v_traj)*(v_traj),axis=1)-np.average((v_traj),axis=1)**2
+    autov[0] = np.average((v_traj)*(v_traj))-np.average((v_traj))**2
     j_list = [1,2,3,5,7,9,11,13,17,19,21]
     for i in range(int(np.log2(duration-1))):
         for j in j_list:
             x = j*2**i
             if x<duration:
-                autov[:,x] = np.average((v_traj[:,x:])*(v_traj[:,:-x]),axis=1)-np.average((v_traj[:,x:]),axis=1)*np.average((v_traj[:,:-x]),axis=1)
+                autov[x] = np.average((v_traj[:,x:])*(v_traj[:,:-x]))-np.average((v_traj[:,x:]))*np.average((v_traj[:,:-x]))
                 
     save_dict = {}
     save_dict['dt'] = RTP.delta_time
-    save_dict['time'] = time[autov[0]!=0]
+    save_dict['time'] = time[autov!=0]
     save_dict['autov0'] = autov[:,0]
     save_dict['autov'] = autov[autov!=0]
-    save_dict['msd'] = msd
+    save_dict['msd'] = msd[autov!=0]
     save_dict['N_X'] = RTP.N_X
     iter = 0
     state = os.getcwd()+'/data/ageing/'+direc+str(f)+'_'+str(iter)+'.npz'
@@ -1013,6 +1013,7 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
             state = os.getcwd()+direc+str(f)+'_'+str(iter)+'.npz'
         else:
             break
+    print('complete')
     np.savez(state, **save_dict)
     
     
