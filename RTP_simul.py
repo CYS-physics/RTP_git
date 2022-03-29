@@ -1001,7 +1001,7 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     save_dict = {}
     save_dict['dt'] = RTP.delta_time
     save_dict['time'] = time[autov!=0]
-    save_dict['autov0'] = autov[:,0]
+    save_dict['autov0'] = autov[0]
     save_dict['autov'] = autov[autov!=0]
     save_dict['msd'] = msd[autov!=0]
     save_dict['N_X'] = RTP.N_X
