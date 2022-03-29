@@ -967,8 +967,8 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     
     RTP.set_zero()
     
-    duration = t_dur*Fs
-    initiation = t_in*Fs
+    duration = int(t_dur*Fs)
+    initiation = int(t_in*Fs)
     
     v_traj = np.empty((RTP.N_X,duration))
     time = (np.arange(duration)+1)*RTP.delta_time
