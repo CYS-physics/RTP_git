@@ -953,7 +953,7 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     direc = '220328/N='+str(N_ptcl)+'/t_init='+str(t_in)+'/'
     os.makedirs('data/ageing/'+direc,exist_ok=True)
 
-    Fs = 20000
+    Fs = 5000
     RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=2000, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
     RTP.a = 1
     RTP.u = 10
