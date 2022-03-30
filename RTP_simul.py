@@ -1010,7 +1010,7 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     while True:
         if os.path.isfile(state):
             iter+=1
-            state = os.getcwd()+direc+str(f)+'_'+str(iter)+'.npz'
+            state = os.getcwd()+'/data/ageing/'+direc+str(f)+'_'+str(iter)+'.npz'
         else:
             break
     print('complete')
