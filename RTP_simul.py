@@ -997,7 +997,7 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
 #             if x<duration:
 #                 autov[x] = np.average((v_traj[:,x:])*(v_traj[:,:-x]))-np.average((v_traj[:,x:]))*np.average((v_traj[:,:-x]))
 
-    autov = np.average((v_traj[:,0]-np.average(v_traj[:,0]))*(v_traj-np.average(v_traj,axis=0)[:,np.newaxis]),axis=0)
+    autov = np.average((v_traj[:,0]-np.average(v_traj[:,0]))[:,np.newaxis]*(v_traj-np.average(v_traj,axis=0)),axis=0)
                 
     save_dict = {}
     save_dict['dt'] = RTP.delta_time
