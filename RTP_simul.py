@@ -950,7 +950,7 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
     
     
 def ageing(f,t_in,t_dur,N_ptcl,progress = False):
-    direc = '220409/N='+str(N_ptcl)+'/t_init='+str(t_in)+'/'
+    direc = '220410/N='+str(N_ptcl)+'/t_dur='+str(t_dur)+'/'
     os.makedirs('data/ageing/'+direc,exist_ok=True)
 
     Fs = 5000
