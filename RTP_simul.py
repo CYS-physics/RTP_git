@@ -988,23 +988,28 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
             v_traj[:,i] = RTP.v/RTP.u
             
     msd = np.average(np.cumsum(v_traj,axis=1)**2,axis=0)*RTP.delta_time**2
-#     autov = np.zeros(duration)
-#     autov[0] = np.average((v_traj)*(v_traj))-np.average((v_traj))**2
-#     j_list = [1,2,3,5,7,9,11,13,17,19,21]
-#     for i in range(int(np.log2(duration-1))):
-#         for j in j_list:
-#             x = j*2**i
-#             if x<duration:
-#                 autov[x] = np.average((v_traj[:,x:])*(v_traj[:,:-x]))-np.average((v_traj[:,x:]))*np.average((v_traj[:,:-x]))
+    
+    
+ #t averaging
+    autov = np.zeros(duration)
+    autov[0] = np.average((v_traj)*(v_traj))-np.average((v_traj))**2
+    j_list = [1,2,3,5,7,9,11,13,17,19,21]
+    for i in range(int(np.log2(duration-1))):
+        for j in j_list:
+            x = j*2**i
+            if x<duration:
+                autov[x] = np.average((v_traj[:,x:])*(v_traj[:,:-x]))-np.average((v_traj[:,x:]))*np.average((v_traj[:,:-x]))
 
-    autov = np.average((v_traj[:,0]-np.average(v_traj[:,0]))[:,np.newaxis]*(v_traj-np.average(v_traj,axis=0)),axis=0)
+
+# e averaging
+#     autov = np.average((v_traj[:,0]-np.average(v_traj[:,0]))[:,np.newaxis]*(v_traj-np.average(v_traj,axis=0)),axis=0)
                 
     save_dict = {}
     save_dict['dt'] = RTP.delta_time
-    save_dict['time'] = time#[autov!=0]
-#     save_dict['autov0'] = autov[0]
-    save_dict['autov'] = autov#[autov!=0]
-    save_dict['msd'] = msd#[autov!=0]
+    save_dict['time'] = time[autov!=0]
+    save_dict['autov0'] = autov[0]
+    save_dict['autov'] = autov[autov!=0]
+    save_dict['msd'] = msd[autov!=0]
     save_dict['N_X'] = RTP.N_X
     iter = 0
     state = os.getcwd()+'/data/ageing/'+direc+str(f)+'_'+str(iter)+'.npz'
