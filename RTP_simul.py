@@ -1023,7 +1023,7 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     np.savez(state, **save_dict)
     
     
-def anomalous(f,duration, N_ptcl,progress = False):
+def anomalous(f,t_dur, N_ptcl,progress = False):
     date = '220630/'+str(N_ptcl)+'/'
     os.makedirs('image/anomalous/'+date,exist_ok=True) 
     os.makedirs('data/anomalous/'+date,exist_ok=True)
@@ -1051,16 +1051,16 @@ def anomalous(f,duration, N_ptcl,progress = False):
     time = (np.arange(duration)+1)*RTP.delta_time
     
     if progress:
-        for _ in trange(1000):
+        for _ in trange(1*Fs):
             RTP.time_evolve()
-        for i in trange(duration):
+        for i in trange(t_dur*Fs):
             RTP.time_evolve()
             v_traj[:,i] = RTP.v/RTP.u
             
     else:
-        for _ in range(1000):
+        for _ in range(1*Fs):
             RTP.time_evolve()
-        for i in range(duration):
+        for i in range(t_dur*Fs):
             RTP.time_evolve()
             v_traj[:,i] = RTP.v/RTP.u
     
