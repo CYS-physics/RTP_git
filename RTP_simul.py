@@ -1046,21 +1046,21 @@ def anomalous(f,t_dur, N_ptcl,progress = False):
     rho = 10
     RTP.muw = rho*RTP.L/RTP.N_ptcl
     RTP.set_zero()
-    
+    duration = t_dur*Fs
     v_traj = np.empty((RTP.N_X,duration))
     time = (np.arange(duration)+1)*RTP.delta_time
     
     if progress:
         for _ in trange(1*Fs):
             RTP.time_evolve()
-        for i in trange(t_dur*Fs):
+        for i in trange(duration):
             RTP.time_evolve()
             v_traj[:,i] = RTP.v/RTP.u
             
     else:
         for _ in range(1*Fs):
             RTP.time_evolve()
-        for i in range(t_dur*Fs):
+        for i in range(duration):
             RTP.time_evolve()
             v_traj[:,i] = RTP.v/RTP.u
     
