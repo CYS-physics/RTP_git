@@ -1024,7 +1024,7 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     
     
 def anomalous(f,duration, N_ptcl,progress = False):
-    date = '220301/'+str(N_ptcl)+'/'
+    date = '220630/'+str(N_ptcl)+'/'
     os.makedirs('image/anomalous/'+date,exist_ok=True) 
     os.makedirs('data/anomalous/'+date,exist_ok=True)
 #     os.makedirs('image/v_hist/'+date,exist_ok=True)  
