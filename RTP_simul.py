@@ -1024,7 +1024,7 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     
     
 def anomalous(f,t_dur, N_ptcl,progress = False):
-    date = '220702_1/N='+str(N_ptcl)+'/t_dur='+str(t_dur)+'/'
+    date = '220703/N='+str(N_ptcl)+'/t_dur='+str(t_dur)+'/'
     os.makedirs('image/anomalous/'+date,exist_ok=True) 
     os.makedirs('data/anomalous/'+date,exist_ok=True)
 #     os.makedirs('image/v_hist/'+date,exist_ok=True)  
@@ -1069,15 +1069,15 @@ def anomalous(f,t_dur, N_ptcl,progress = False):
     # autocorr
     
 
-    autov = np.zeros(v_traj.shape)
+    autov = np.zeros(duration)
 #     autov = np.zeros(duration)
-    autov[:,0] = np.average((v_traj)*(v_traj),axis=1)-np.average((v_traj),axis=1)**2
+    autov[0] = np.average((v_traj)*(v_traj))-np.average((v_traj))**2
     j_list = [1,2,3,5,7,9,11,13,17,19,21]
     for i in range(int(np.log2(duration-1))):
         for j in j_list:
             x = j*2**i
             if x<duration:
-                autov[:,x] = np.average((v_traj[:,x:])*(v_traj[:,:-x]),axis=1)-np.average((v_traj[:,x:]),axis=1)*np.average((v_traj[:,:-x]),axis=1)
+                autov[x] = np.average(np.average((v_traj[:,x:])*(v_traj[:,:-x]),axis=1)-np.average((v_traj[:,x:]),axis=1)*np.average((v_traj[:,:-x]),axis=1))
 #                 autov[x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:]))*(v_traj[:,:-x]-np.average(v_traj[:,:-x])))/np.average((v_traj-np.average(v_traj))**2)
         
 #     try:
@@ -1107,13 +1107,13 @@ def anomalous(f,t_dur, N_ptcl,progress = False):
     # diffusion
     plt.subplot(2,2,2)
     disp = np.cumsum(v_traj,axis=1)
-    msd = np.zeros(v_traj.shape)
+    msd = np.zeros(duration)
     
     for i in range(int(np.log2(duration-1))):
         for j in j_list:
             x = j*2**i
             if x<duration:
-                msd[:,x] = np.average((disp[:,x:]-disp[:,:-x])**2,axis=1)
+                msd[x] = np.average(np.average((disp[:,x:]-disp[:,:-x])**2,axis=1))
         
 #     diff = np.average(np.cumsum(v_traj,axis=1)**2,axis=0)
     
