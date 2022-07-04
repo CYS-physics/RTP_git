@@ -1090,8 +1090,8 @@ def anomalous(f,t_dur, N_ptcl,progress = False):
 
     plt.subplot(2,2,1)
     
-    for i in range(len(autov)):
-        plt.scatter(time, autov[i],s=1)
+    # for i in range(len(autov)):
+    plt.scatter(time, autov,s=1)
 #     plt.scatter(time,autov,s=1)
 
 
@@ -1125,8 +1125,8 @@ def anomalous(f,t_dur, N_ptcl,progress = False):
 #         # your code that will (maybe) throw
 #     except np.linalg.LinAlgError as e:
 #         pass
-    for i in range(len(v_traj)):
-        plt.scatter(time[:-1][msd[i,:-1]>0], msd[i,:-1][msd[i,:-1]>0],s=1)
+    # for i in range(len(v_traj)):
+    plt.scatter(time[:-1][msd[:-1]>0], msd[:-1][msd[:-1]>0],s=1)
     
     plt.xlabel('t')
     plt.ylabel('<x^2>')
