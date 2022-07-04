@@ -1024,7 +1024,7 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     
     
 def anomalous(f,t_dur, N_ptcl,progress = False):
-    date = '220703/N='+str(N_ptcl)+'/t_dur='+str(t_dur)+'/'
+    date = '220704/N='+str(N_ptcl)+'/t_dur='+str(t_dur)+'/'
     os.makedirs('image/anomalous/'+date,exist_ok=True) 
     os.makedirs('data/anomalous/'+date,exist_ok=True)
 #     os.makedirs('image/v_hist/'+date,exist_ok=True)  
@@ -1088,24 +1088,24 @@ def anomalous(f,t_dur, N_ptcl,progress = False):
 #     except np.linalg.LinAlgError as e:
 #         pass
 
-    plt.subplot(2,2,1)
+#     plt.subplot(2,2,1)
     
-    # for i in range(len(autov)):
-    plt.scatter(time, autov,s=1)
-#     plt.scatter(time,autov,s=1)
+#     # for i in range(len(autov)):
+#     plt.scatter(time, autov,s=1)
+# #     plt.scatter(time,autov,s=1)
 
 
-    plt.yscale('log')
-    plt.xscale('log')
-    plt.ylim(0.01,2)
-    plt.xlabel('t')
-    plt.ylabel('corr')
-    plt.grid()
-#     plt.legend()
-    plt.title('f :'+str(f))
+#     plt.yscale('log')
+#     plt.xscale('log')
+#     plt.ylim(0.01,2)
+#     plt.xlabel('t')
+#     plt.ylabel('corr')
+#     plt.grid()
+# #     plt.legend()
+#     plt.title('f :'+str(f))
 
-    # diffusion
-    plt.subplot(2,2,2)
+#     # diffusion
+#     plt.subplot(2,2,2)
     disp = np.cumsum(v_traj,axis=1)
     msd = np.zeros(duration)
     
@@ -1126,33 +1126,33 @@ def anomalous(f,t_dur, N_ptcl,progress = False):
 #     except np.linalg.LinAlgError as e:
 #         pass
     # for i in range(len(v_traj)):
-    plt.scatter(time[:-1][msd[:-1]>0], msd[:-1][msd[:-1]>0],s=1)
+#     plt.scatter(time[:-1][msd[:-1]>0], msd[:-1][msd[:-1]>0],s=1)
     
-    plt.xlabel('t')
-    plt.ylabel('<x^2>')
-    plt.yscale('log')
-    plt.xscale('log')
-    plt.grid()
-#     plt.legend()
-    plt.title('f :'+str(f))
+#     plt.xlabel('t')
+#     plt.ylabel('<x^2>')
+#     plt.yscale('log')
+#     plt.xscale('log')
+#     plt.grid()
+# #     plt.legend()
+#     plt.title('f :'+str(f))
+# #     if progress:
+# #         plt.show()
+# #     else:
+# #         plt.savefig('image/anomalous/'+date+'f='+str(f)+'.png')
+# #         plt.clf()
+
+
+# #     
+#     plt.subplot(2,1,2)
+#     binning = np.linspace(-1.5,1.5,100)
+#     count,bins,_ = plt.hist(v_traj.reshape(-1),bins=binning)
+#     plt.yscale('log')
+
 #     if progress:
 #         plt.show()
 #     else:
 #         plt.savefig('image/anomalous/'+date+'f='+str(f)+'.png')
 #         plt.clf()
-
-
-#     
-    plt.subplot(2,1,2)
-    binning = np.linspace(-1.5,1.5,100)
-    count,bins,_ = plt.hist(v_traj.reshape(-1),bins=binning)
-    plt.yscale('log')
-
-    if progress:
-        plt.show()
-    else:
-        plt.savefig('image/anomalous/'+date+'f='+str(f)+'.png')
-        plt.clf()
         
     state = 'data/anomalous/'+date+'f='+str(f)+'.npz'
     save_dict = {}
