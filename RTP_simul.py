@@ -1025,7 +1025,7 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     
 def anomalous(f,t_dur, N_ptcl,progress = False):
     date = '220704/N='+str(N_ptcl)+'/t_dur='+str(t_dur)+'/'
-    os.makedirs('image/anomalous/'+date,exist_ok=True) 
+    # os.makedirs('image/anomalous/'+date,exist_ok=True) 
     os.makedirs('data/anomalous/'+date,exist_ok=True)
 #     os.makedirs('image/v_hist/'+date,exist_ok=True)  
 
@@ -1078,36 +1078,10 @@ def anomalous(f,t_dur, N_ptcl,progress = False):
             x = j*2**i
             if x<duration:
                 autov[x] = np.average(np.average((v_traj[:,x:])*(v_traj[:,:-x]),axis=1)-np.average((v_traj[:,x:]),axis=1)*np.average((v_traj[:,:-x]),axis=1))
-#                 autov[x] = np.average((v_traj[:,x:]-np.average(v_traj[:,x:]))*(v_traj[:,:-x]-np.average(v_traj[:,:-x])))/np.average((v_traj-np.average(v_traj))**2)
-        
-#     try:
-#         m, c = np.polyfit(np.log(time[:int(duration/10)]), np.log(autov[:int(duration/10)]), 1) # fit log(y) = m*log(x) + c
-#         y_fit = np.exp(m*np.log(time) + c) # calculate the fitted values of y
-#         plt.plot(time, y_fit, ':',label='slope : ' + str(m))
-#         # your code that will (maybe) throw
-#     except np.linalg.LinAlgError as e:
-#         pass
-
-#     plt.subplot(2,2,1)
-    
-#     # for i in range(len(autov)):
-#     plt.scatter(time, autov,s=1)
-# #     plt.scatter(time,autov,s=1)
-
-
-#     plt.yscale('log')
-#     plt.xscale('log')
-#     plt.ylim(0.01,2)
-#     plt.xlabel('t')
-#     plt.ylabel('corr')
-#     plt.grid()
-# #     plt.legend()
-#     plt.title('f :'+str(f))
-
-#     # diffusion
-#     plt.subplot(2,2,2)
+    # MSD
     disp = np.cumsum(v_traj,axis=1)
     msd = np.zeros(duration)
+    msd[0]
     
     for i in range(int(np.log2(duration-1))):
         for j in j_list:
@@ -1115,49 +1089,10 @@ def anomalous(f,t_dur, N_ptcl,progress = False):
             if x<duration:
                 msd[x] = np.average(np.average((disp[:,x:]-disp[:,:-x])**2,axis=1))
         
-#     diff = np.average(np.cumsum(v_traj,axis=1)**2,axis=0)
-    
-#     try:
-#         m, c = np.polyfit(np.log(time[:int(duration/10)]), np.log(diff[:int(duration/10)]), 1) # fit log(y) = m*log(x) + c
-#         y_fit = np.exp(m*np.log(time) + c) # calculate the 
-#         plt.plot(time, y_fit, ':',label='slope : ' + str(m))
-
-#         # your code that will (maybe) throw
-#     except np.linalg.LinAlgError as e:
-#         pass
-    # for i in range(len(v_traj)):
-#     plt.scatter(time[:-1][msd[:-1]>0], msd[:-1][msd[:-1]>0],s=1)
-    
-#     plt.xlabel('t')
-#     plt.ylabel('<x^2>')
-#     plt.yscale('log')
-#     plt.xscale('log')
-#     plt.grid()
-# #     plt.legend()
-#     plt.title('f :'+str(f))
-# #     if progress:
-# #         plt.show()
-# #     else:
-# #         plt.savefig('image/anomalous/'+date+'f='+str(f)+'.png')
-# #         plt.clf()
-
-
-# #     
-#     plt.subplot(2,1,2)
-#     binning = np.linspace(-1.5,1.5,100)
-#     count,bins,_ = plt.hist(v_traj.reshape(-1),bins=binning)
-#     plt.yscale('log')
-
-#     if progress:
-#         plt.show()
-#     else:
-#         plt.savefig('image/anomalous/'+date+'f='+str(f)+'.png')
-#         plt.clf()
-        
     state = 'data/anomalous/'+date+'f='+str(f)+'.npz'
     save_dict = {}
-    save_dict['time'] = time[msd[0]!=0]
-    save_dict['autov0'] = autov[:,0]
+    save_dict['time'] = time[msd!=0]
+    save_dict['autov0'] = autov[0]
     save_dict['autov'] = autov[msd!=0]
     save_dict['msd'] = msd[msd!=0]
     save_dict['count'] = count
