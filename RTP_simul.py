@@ -1095,8 +1095,8 @@ def anomalous(f,t_dur, N_ptcl,progress = False):
     save_dict['autov0'] = autov[0]
     save_dict['autov'] = autov[msd!=0]
     save_dict['msd'] = msd[msd!=0]
-    save_dict['count'] = count
-    save_dict['bins'] = bins
+    # save_dict['count'] = count
+    # save_dict['bins'] = bins
     np.savez(state, **save_dict)
 
 
