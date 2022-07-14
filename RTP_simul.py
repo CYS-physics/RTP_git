@@ -1023,8 +1023,8 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     np.savez(state, **save_dict)
     
     
-def anomalous(f,t_dur, N_ptcl,progress = False):
-    date = '220712/N='+str(N_ptcl)+'/t_dur='+str(t_dur)+'/'
+def anomalous(a,f,t_dur, N_ptcl,progress = False):
+    date = '220714/N='+str(N_ptcl)+'/a='+str(a)+'/t_dur='+str(t_dur)+'/'
     # os.makedirs('image/anomalous/'+date,exist_ok=True) 
     os.makedirs('data/anomalous/'+date,exist_ok=True)
 #     os.makedirs('image/v_hist/'+date,exist_ok=True)  
@@ -1032,7 +1032,7 @@ def anomalous(f,t_dur, N_ptcl,progress = False):
 
     plt.clf()
 #     a=0.7   #fc = 0.65
-    a=0.9 # fc = 0.77
+    # a=0.9 # fc = 0.77
     # a = 1.1 # fc = 
     Fs=5000
     
