@@ -1024,7 +1024,7 @@ def ageing(f,t_in,t_dur,N_ptcl,progress = False):
     
     
 def anomalous(a,f,t_dur, N_ptcl,progress = False):
-    date = '220714/N='+str(N_ptcl)+'/a='+str(a)+'/t_dur='+str(t_dur)+'/'
+    date = '220715/N='+str(N_ptcl)+'/a='+str(a)+'/t_dur='+str(t_dur)+'/'
     # os.makedirs('image/anomalous/'+date,exist_ok=True) 
     os.makedirs('data/anomalous/'+date,exist_ok=True)
 #     os.makedirs('image/v_hist/'+date,exist_ok=True)  
@@ -1034,7 +1034,7 @@ def anomalous(a,f,t_dur, N_ptcl,progress = False):
 #     a=0.7   #fc = 0.65
     # a=0.9 # fc = 0.77
     # a = 1.1 # fc = 
-    Fs=5000
+    Fs=10000
     
     RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=2000, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
     RTP.compute = False
@@ -1043,7 +1043,7 @@ def anomalous(a,f,t_dur, N_ptcl,progress = False):
     RTP.u = a*RTP.l*RTP.alpha/2
     
     RTP.F = f*RTP.u/RTP.mu
-    rho = 10
+    rho = 2
     RTP.muw = rho*RTP.L/RTP.N_ptcl
     RTP.set_zero()
     duration = int(t_dur*Fs)
