@@ -1051,14 +1051,14 @@ def anomalous(a,f,t_dur, N_ptcl,progress = False):
     time = (np.arange(duration)+1)*RTP.delta_time
     
     if progress:
-        for _ in trange(1*Fs):
+        for _ in trange(5*Fs):
             RTP.time_evolve()
         for i in trange(duration):
             RTP.time_evolve()
             v_traj[:,i] = RTP.v/RTP.u
             
     else:
-        for _ in range(1*Fs):
+        for _ in range(5*Fs):
             RTP.time_evolve()
         for i in range(duration):
             RTP.time_evolve()
