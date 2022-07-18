@@ -1045,7 +1045,7 @@ def anomalous(a,f,t_dur, N_ptcl,progress = False):
     RTP.F = f*RTP.u/RTP.mu
     # rho = 5
     gamma = 0.1
-    rho = alpha*mu/(RTP.u*gamma)
+    rho = RTP.alpha*RTP.mu/(RTP.u*gamma)
     RTP.muw = rho*RTP.L/RTP.N_ptcl
     RTP.set_zero()
     duration = int(t_dur*Fs)
