@@ -949,18 +949,19 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
 #     return corr/z_max
     
     
-def ageing(f,t_in,t_dur,N_ptcl,progress = False):
-    direc = '220410/N='+str(N_ptcl)+'/t_dur='+str(t_dur)+'/'
+def ageing(f,t_in,t_dur,a, N_ptcl,progress = False):
+    direc = '220719/N='+str(N_ptcl)+'/t_dur='+str(t_dur)+'/'
     os.makedirs('data/ageing/'+direc,exist_ok=True)
 
     Fs = 5000
-    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=100, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
-    RTP.a = 1
+    RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=500, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
+    RTP.a = a
     RTP.u = 10
     RTP.alpha=1
     RTP.l = 2*RTP.u/(RTP.a*RTP.alpha)
     RTP.L = 300
-    rho=10
+    gamma = 0.1
+    rho = RTP.alpha*RTP.mu/(RTP.u*gamma)
     RTP.muw = rho*RTP.L/RTP.N_ptcl
     
     RTP.F = f*RTP.u/RTP.mu
