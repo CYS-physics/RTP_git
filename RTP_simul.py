@@ -950,10 +950,10 @@ def f_density(N_ptcl, f_init, f_fin, N,name):
     
     
 def ageing(f,t_in,t_dur,a, N_ptcl,progress = False):
-    direc = '220811/a='+str(a)+'/N='+str(N_ptcl)+'/t_dur='+str(t_dur)+'/t_in='+str(t_in)+'/'
+    direc = '220816/a='+str(a)+'/N='+str(N_ptcl)+'/t_dur='+str(t_dur)+'/t_in='+str(t_in)+'/'
     os.makedirs('data/ageing/'+direc,exist_ok=True)
 
-    Fs = 10000
+    Fs = 20000
     RTP = RTP_lab(alpha=1, u=10, len_time=100, N_time=Fs,N_X=300, N_ptcl=N_ptcl, v=0, mu=1, muw = 1)
     RTP.a = a
     RTP.u = 10
