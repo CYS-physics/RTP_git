@@ -58,6 +58,7 @@ class RTP_lab:     # OOP
         self.N_simul = np.int64(self.len_time*self.N_time)
         self.delta_time = 1/self.N_time
         self.D_eff = self.u**2/self.alpha
+        self.v = v
         
         self.mu = mu
         
@@ -66,6 +67,7 @@ class RTP_lab:     # OOP
         self.L= 300
         self.d=10
         self.k=20
+        self.k_s = 10
 
 
         
@@ -120,7 +122,22 @@ class RTP_lab:     # OOP
         output[E]+=self.F* (  np.exp(-self.k*(y[E])) - np.exp(self.k*(y[E]))  )/(   np.exp(-self.k*(y[E]))  +  np.exp(self.k*(y[E]))  )
         
         return output
+    def drag_V(self,x,s):
+        y = self.periodic(x-self.X)
+        #return self.F*(-self.l/2<=y)*(y<0)-self.F*(0<y)*(y<=self.l/2)
         
+        output = 0*y
+        
+        
+        
+        # indexing
+        A =  (-self.l/2<=y)*(y<=self.l/2)*(s>0)      # rightmoving
+        B =  (-self.l/2<=y)*(y<=self.l/2)*(s<0)      # leftmoving
+        
+        output[A]+=self.F
+        output[B]-=self.F
+        
+        return output
         
         
         
@@ -132,6 +149,7 @@ class RTP_lab:     # OOP
         self.s = np.random.choice([1,-1],np.array([self.N_ptcl,self.N_X]))             # random direction at initial time
         self.x = np.random.uniform(-self.L/2, self.L/2, size=np.array([self.N_ptcl,self.N_X]))     # starting with uniformly distributed particles
         self.X = np.zeros(self.N_X)
+        self.X_s = np.zeros(self.N_X)
 #         self.v = np.zeros(self.N_X)
     
     def tumble(self):             # random part of s dynamics
@@ -142,33 +160,45 @@ class RTP_lab:     # OOP
         dxa = self.u*self.delta_time
         ds = self.tumble()
         
-        dx = dxa*s  -self.mu*self.partial_V(x)*self.delta_time
-        if self.model==3:
-            v = self.muw*np.sum(self.partial_V(x),axis=0)
-        elif self.model ==2:
+        self.F_ob = np.sum(self.partial_V(x),axis=0)
+        
+        if self.model ==2:   # fixed v dragging
             v = self.v
-
-
+            dx = dxa*s  -self.mu*self.partial_V(x)*self.delta_time
+        
+        elif self.model==3:     # interactive
+            v = self.muw*self.F_ob
+            dx = dxa*s  -self.mu*self.partial_V(x)*self.delta_time
+        
+        elif self.model ==4:   # viscous model 
+            v = self.v
+            dx = dxa*s  -self.mu*self.drag_V(x,s)*self.delta_time
+        
+        elif self.model ==5:    # spring model
+            v = self.muw*(self.F_ob+self.k_s*self.periodic(self.X_s-self.X))
+            dx = dxa*s  -self.mu*self.partial_V(x)*self.delta_time
+            self.F_s = self.k_s*(self.X_s-self.X)
+            self.W_s = v*self.F_s*self.delta_time
 
 
         return (v, dx, ds)
+
         
     def time_evolve(self):
         (v, dx, ds) = self.dynamics(self.x, self.s)
-        
-        self.v = v
-#         if self.compute:
-#             self.dS1 = -np.average(self.partial_V(self.x+dx/2-v*self.delta_time/2)*(dx-v*self.delta_time),axis=0)
-#             self.dS2 = (self.u/self.mu)*np.average(self.s*dx,axis=0)
+
+        # self.v = v
         
           
         self.x += dx                     # active particles movement
         self.s *= ds                     # direction of movement changed if the tumble is true
         self.X += v*self.delta_time           # passive object movement
+        self.X_s += self.v*self.delta_time
+        
         
         self.x = self.periodic(self.x)
         self.X = self.periodic(self.X)
-        
+        self.X_s = self.periodic(self.X_s)
             
             
             
