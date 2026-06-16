@@ -13,11 +13,10 @@ os.environ["OMP_NUM_THREADS"] = "1"
 
 
 import numpy as np                   # numerical calculation
-import pandas as pd                  # data processing
-from tqdm import trange              # progess bar
+#from tqdm import trange              # progess bar
 import matplotlib.pyplot as plt      # visualization
 # import os                            # file management
-from matplotlib.animation import FuncAnimation     # animation
+#from matplotlib.animation import FuncAnimation     # animation
 import sys
 
 
@@ -27,11 +26,11 @@ class RTP_lab:     # OOP
     
     # initializing coefficients of model and configuration of states in phase space
     
-    def __init__(self,alpha=1, u=10, len_time=100, N_time=100,N_X=1, N_ptcl=40000, v=0, mu=1, muw = 0.005, model=3):
+    def __init__(self,alpha=1, u=10, len_time=100, N_time=100,N_X=1, N_ptcl=40000, vs=0, mu=1, muw = 0.005, model=3):
         
-        self.initial_state = (alpha,u,len_time,N_time,N_X, N_ptcl,v,mu,muw)    # recording initial state
+        self.initial_state = (alpha,u,len_time,N_time,N_X, N_ptcl,vs,mu,muw)    # recording initial state
         # coefficients
-        self.set_coeff(alpha, u, len_time, N_time, N_X,N_ptcl,v,mu, muw) 
+        self.set_coeff(alpha, u, len_time, N_time, N_X,N_ptcl,vs,mu, muw) 
         
         # model=2 constantly moving passive object, model=3 interacting passive object
         self.model=model
@@ -48,19 +47,21 @@ class RTP_lab:     # OOP
             
             
     # setting coefficients
-    def set_coeff(self,alpha=1, u=10, len_time=200, N_time=100, N_X = 1, N_ptcl=40000, v=0, mu=1, muw = 0.005):
+    def set_coeff(self,alpha=1, u=10, len_time=200, N_time=100, N_X = 1, N_ptcl=40000, vs=0, mu=1, muw = 0.005):
         self.alpha = alpha                       # rate of tumble (/time dimension)
         self.u = u                               # velocity of particle
         self.len_time = len_time                 # time turation
-        self.N_time = N_time                     # number of simulation in unit time
-        self.N_X = N_X
-        self.N_ptcl = N_ptcl
+        self.N_time = int(N_time)                # number of simulation in unit time
+        self.N_X = int(N_X)
+        self.N_ptcl = int(N_ptcl)
         self.N_simul = np.int64(self.len_time*self.N_time)
         self.delta_time = 1/self.N_time
         self.D_eff = self.u**2/self.alpha
-        self.v = v
+        self.vs = vs
+        self.v = 0
         
         self.mu = mu
+        self.M = 100
         
         self.F=4              # just give potential of fixed value for now
         self.l=30
@@ -146,14 +147,22 @@ class RTP_lab:     # OOP
     # Dynamics part
     def set_zero(self):              # initializing simulation configurations
         self.time = np.linspace(0,self.len_time,num=self.N_simul)
-        self.s = np.random.choice([1,-1],np.array([self.N_ptcl,self.N_X]))             # random direction at initial time
-        self.x = np.random.uniform(-self.L/2, self.L/2, size=np.array([self.N_ptcl,self.N_X]))     # starting with uniformly distributed particles
+        shape = (self.N_ptcl, self.N_X)
+        self.s = np.ones(shape, dtype=np.int8)
+        self.s[np.random.random(shape) < 0.5] = -1             # random direction at initial time
+        self.x = np.random.uniform(-self.L/2, self.L/2, size=shape)     # starting with uniformly distributed particles
         self.X = np.zeros(self.N_X)
         self.X_s = np.zeros(self.N_X)
+        self.v = np.zeros(self.N_X)
 #         self.v = np.zeros(self.N_X)
     
     def tumble(self):             # random part of s dynamics
-        tumble = np.random.choice([1,-1], size=np.array([self.N_ptcl,self.N_X]), p = [1-self.delta_time*self.alpha/2, self.delta_time*self.alpha/2]) # +1 no tumble, -1 tumble
+        p_tumble = self.delta_time*self.alpha/2
+        if p_tumble < 0 or p_tumble > 1:
+            raise ValueError('delta_time*alpha/2 must be between 0 and 1')
+        shape = (self.N_ptcl, self.N_X)
+        tumble = np.ones(shape, dtype=np.int8)
+        tumble[np.random.random(shape) < p_tumble] = -1 # +1 no tumble, -1 tumble
         return tumble
     
     def dynamics(self,x,s):         # dynamics of x and s to give time difference of x and s
@@ -163,7 +172,7 @@ class RTP_lab:     # OOP
         self.F_ob = np.sum(self.partial_V(x),axis=0)
         
         if self.model ==2:   # fixed v dragging
-            v = self.v
+            dv = 0
             dx = dxa*s  -self.mu*self.partial_V(x)*self.delta_time
         
         elif self.model==3:     # interactive
@@ -171,29 +180,30 @@ class RTP_lab:     # OOP
             dx = dxa*s  -self.mu*self.partial_V(x)*self.delta_time
         
         elif self.model ==4:   # viscous model 
-            v = self.v
+            dv = 0
             dx = dxa*s  -self.mu*self.drag_V(x,s)*self.delta_time
         
         elif self.model ==5:    # spring model
-            v = self.muw*(self.F_ob+self.k_s*self.periodic(self.X_s-self.X))
+            dv = (self.delta_time/self.M)*(self.F_ob+self.k_s*self.periodic(self.X_s-self.X))
+            # v = self.muw*(self.F_ob+self.k_s*self.periodic(self.X_s-self.X))
             dx = dxa*s  -self.mu*self.partial_V(x)*self.delta_time
-            self.F_s = self.k_s*(self.X_s-self.X)
-            self.W_s = v*self.F_s*self.delta_time
+            # self.F_s = self.k_s*(self.X_s-self.X)
+            # self.W_s = self.v*self.F_s*self.delta_time
 
 
-        return (v, dx, ds)
+        return (dv, dx, ds)
 
         
     def time_evolve(self):
-        (v, dx, ds) = self.dynamics(self.x, self.s)
+        (dv, dx, ds) = self.dynamics(self.x, self.s)
 
-        # self.v = v
+        self.v += dv
         
           
         self.x += dx                     # active particles movement
         self.s *= ds                     # direction of movement changed if the tumble is true
-        self.X += v*self.delta_time           # passive object movement
-        self.X_s += self.v*self.delta_time
+        self.X += self.v*self.delta_time           # passive object movement
+        self.X_s += self.vs*self.delta_time
         
         
         self.x = self.periodic(self.x)
