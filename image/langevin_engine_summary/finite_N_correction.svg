@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="410" viewBox="0 0 760 410">
+<rect width="100%" height="100%" fill="white"/>
+<text x="380.0" y="24.0" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" fill="#263238">Finite-N correction at v0=0.75</text>
+<line x1="76.0" y1="44" x2="76.0" y2="352" stroke="#eceff1"/>
+<text x="76.0" y="372.0" font-size="11" text-anchor="middle" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">50</text>
+<line x1="200.0" y1="44" x2="200.0" y2="352" stroke="#eceff1"/>
+<text x="200.0" y="372.0" font-size="11" text-anchor="middle" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">100</text>
+<line x1="324.0" y1="44" x2="324.0" y2="352" stroke="#eceff1"/>
+<text x="324.0" y="372.0" font-size="11" text-anchor="middle" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">200</text>
+<line x1="488.0" y1="44" x2="488.0" y2="352" stroke="#eceff1"/>
+<text x="488.0" y="372.0" font-size="11" text-anchor="middle" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">500</text>
+<line x1="612.0" y1="44" x2="612.0" y2="352" stroke="#eceff1"/>
+<text x="612.0" y="372.0" font-size="11" text-anchor="middle" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">1000</text>
+<line x1="736.0" y1="44" x2="736.0" y2="352" stroke="#eceff1"/>
+<text x="736.0" y="372.0" font-size="11" text-anchor="middle" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">2000</text>
+<line x1="76" y1="352.0" x2="736" y2="352.0" stroke="#eceff1"/>
+<text x="66.0" y="356.0" font-size="11" text-anchor="end" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">0.297</text>
+<line x1="76" y1="290.4" x2="736" y2="290.4" stroke="#eceff1"/>
+<text x="66.0" y="294.4" font-size="11" text-anchor="end" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">0.304</text>
+<line x1="76" y1="228.8" x2="736" y2="228.8" stroke="#eceff1"/>
+<text x="66.0" y="232.8" font-size="11" text-anchor="end" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">0.310</text>
+<line x1="76" y1="167.2" x2="736" y2="167.2" stroke="#eceff1"/>
+<text x="66.0" y="171.2" font-size="11" text-anchor="end" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">0.317</text>
+<line x1="76" y1="105.6" x2="736" y2="105.6" stroke="#eceff1"/>
+<text x="66.0" y="109.6" font-size="11" text-anchor="end" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">0.324</text>
+<line x1="76" y1="44.0" x2="736" y2="44.0" stroke="#eceff1"/>
+<text x="66.0" y="48.0" font-size="11" text-anchor="end" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">0.330</text>
+<line x1="76" y1="352" x2="736" y2="352" stroke="#37474f"/>
+<line x1="76" y1="44" x2="76" y2="352" stroke="#37474f"/>
+<polyline points="76.0,330.8 200.0,165.8 324.0,101.0 488.0,86.5 612.0,77.3 736.0,74.9" fill="none" stroke="#2a9d8f" stroke-width="2.3"/>
+<circle cx="76.0" cy="330.8" r="3.2" fill="white" stroke="#2a9d8f" stroke-width="1.6"/>
+<circle cx="200.0" cy="165.8" r="3.2" fill="white" stroke="#2a9d8f" stroke-width="1.6"/>
+<circle cx="324.0" cy="101.0" r="3.2" fill="white" stroke="#2a9d8f" stroke-width="1.6"/>
+<circle cx="488.0" cy="86.5" r="3.2" fill="white" stroke="#2a9d8f" stroke-width="1.6"/>
+<circle cx="612.0" cy="77.3" r="3.2" fill="white" stroke="#2a9d8f" stroke-width="1.6"/>
+<circle cx="736.0" cy="74.9" r="3.2" fill="white" stroke="#2a9d8f" stroke-width="1.6"/>
+<polyline points="76.0,307.7 200.0,186.5 324.0,125.9 488.0,89.5 612.0,77.4 736.0,71.3" fill="none" stroke="#e76f51" stroke-width="2.3"/>
+<circle cx="76.0" cy="307.7" r="3.2" fill="white" stroke="#e76f51" stroke-width="1.6"/>
+<circle cx="200.0" cy="186.5" r="3.2" fill="white" stroke="#e76f51" stroke-width="1.6"/>
+<circle cx="324.0" cy="125.9" r="3.2" fill="white" stroke="#e76f51" stroke-width="1.6"/>
+<circle cx="488.0" cy="89.5" r="3.2" fill="white" stroke="#e76f51" stroke-width="1.6"/>
+<circle cx="612.0" cy="77.4" r="3.2" fill="white" stroke="#e76f51" stroke-width="1.6"/>
+<circle cx="736.0" cy="71.3" r="3.2" fill="white" stroke="#e76f51" stroke-width="1.6"/>
+<polyline points="76.0,65.2 200.0,65.2 324.0,65.2 488.0,65.2 612.0,65.2 736.0,65.2" fill="none" stroke="#455a64" stroke-width="2.3"/>
+<circle cx="76.0" cy="65.2" r="3.2" fill="white" stroke="#455a64" stroke-width="1.6"/>
+<circle cx="200.0" cy="65.2" r="3.2" fill="white" stroke="#455a64" stroke-width="1.6"/>
+<circle cx="324.0" cy="65.2" r="3.2" fill="white" stroke="#455a64" stroke-width="1.6"/>
+<circle cx="488.0" cy="65.2" r="3.2" fill="white" stroke="#455a64" stroke-width="1.6"/>
+<circle cx="612.0" cy="65.2" r="3.2" fill="white" stroke="#455a64" stroke-width="1.6"/>
+<circle cx="736.0" cy="65.2" r="3.2" fill="white" stroke="#455a64" stroke-width="1.6"/>
+<line x1="576" y1="62" x2="598" y2="62" stroke="#2a9d8f" stroke-width="2.4"/>
+<text x="604.0" y="66.0" font-size="11" text-anchor="start" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">simulation</text>
+<line x1="576" y1="81" x2="598" y2="81" stroke="#e76f51" stroke-width="2.4"/>
+<text x="604.0" y="85.0" font-size="11" text-anchor="start" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">1/N theory</text>
+<line x1="576" y1="100" x2="598" y2="100" stroke="#455a64" stroke-width="2.4"/>
+<text x="604.0" y="104.0" font-size="11" text-anchor="start" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">mean field</text>
+<text x="406.0" y="396.0" font-size="12" text-anchor="middle" font-family="Arial, sans-serif" font-weight="normal" fill="#263238">bath size N</text>
+<text x="18" y="198.0" font-size="12" text-anchor="middle" font-family="Arial, sans-serif" fill="#263238" transform="rotate(-90 18 198.0)">mean force k&lt;y&gt;</text>
+</svg>
